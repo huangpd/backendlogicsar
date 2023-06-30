@@ -29,6 +29,8 @@ export const emailRegistro = async (datos) => {
   const info = await transport.sendMail({
     from: '"CarryOn - Bienvenid@!" <carryon.arg@gmail.com>',
     to: email,
+    cc: "carryon.arg@gmail.com",
+
     subject: "Alta de cuenta",
     text: "Verifica tu cuenta en CarryOn",
     html: `
@@ -65,6 +67,7 @@ export const emailOlvidePassword = async (datos) => {
   const info = await transport.sendMail({
     from: '"Carry On" <carryon.arg@gmail.com>',
     to: email,
+    cc: "carryon.arg@gmail.com",
     subject: "Reestablece tu Password",
     text: "Reestablece tu Password",
     html: `
@@ -99,6 +102,7 @@ export const emailNuevoViajeProveedor = async (datos) => {
   const info = await transport.sendMail({
     from: '"CarryOn" <carryon.arg@gmail.com>',
     to: email,
+    cc: "carryon.arg@gmail.com",
     subject: "Nuevo Viaje!",
     text: "Tienes un nuevo viaje para confirmar",
     html: `
@@ -130,6 +134,7 @@ export const emailNuevoViajeCliente = async (datos) => {
   const info = await transport.sendMail({
     from: '"CarryOn" <carryon.arg@gmail.com>',
     to: email,
+    cc: "carryon.arg@gmail.com",
     subject: "Nuevo Viaje Registrado!",
     text: "Hemos registrado su pedido",
     html: `
@@ -141,6 +146,11 @@ export const emailNuevoViajeCliente = async (datos) => {
 };
 
 export const notificarViajes = async (usuarios, servicio, viajes) => {
+  console.log("intento enviar mail");
+  console.log(usuarios);
+  console.log(servicio);
+  console.log(viajes);
+
   const hemail = process.env.EMAIL;
   const hpass = process.env.PASSWORD;
   const host = process.env.HOST;
@@ -172,6 +182,7 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
       const info = await transport.sendMail({
         from: '"CarryOn" <carryon.arg@gmail.com>',
         to: email,
+        cc: "carryon.arg@gmail.com",
         subject: `Pedido de Transporte - ${moment(fechaCarga).format(
           "dddd DD/MM"
         )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
@@ -223,19 +234,15 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
       });
     }
   } else {
-    const { email, nombre } = usuarios;
-    const {
-      nombreCliente,
-      numeroPedido,
-      fechaCarga,
-      horaCarga,
-      origenCarga,
-      observaciones,
-    } = servicio;
+    const { email, nombre } = usuarios[0];
+
+    const { nombreCliente, numeroPedido, fechaCarga, horaCarga, origenCarga } =
+      servicio;
 
     const info = await transport.sendMail({
       from: '"CarryOn" <carryon.arg@gmail.com>',
       to: email,
+      cc: "carryon.arg@gmail.com",
       subject: `Pedido de Transporte - ${moment(fechaCarga).format(
         "dddd DD/MM"
       )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
@@ -285,8 +292,8 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
           <p>Equipo CarryOn</p>
       `,
     });
+    console.log(info);
   }
-
   console.log("Email Enviado");
 };
 
@@ -329,6 +336,7 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
       const info = await transport.sendMail({
         from: '"CarryOn" <carryon.arg@gmail.com>',
         to: email,
+        cc: "carryon.arg@gmail.com",
         subject: `Pedido de Transporte Nro ${numeroPedido} | ${moment(
           fechaCarga
         ).format("dddd DD/MM")} | ${horaCarga} | ${nombreTerminal}`,
@@ -402,6 +410,7 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
     const info = await transport.sendMail({
       from: '"CarryOn" <carryon.arg@gmail.com>',
       to: email,
+      cc: "carryon.arg@gmail.com",
       subject: `Pedido de Transporte Nro ${numeroPedido} | ${moment(
         fechaCarga
       ).format("dddd DD/MM")} | ${horaCarga} | ${nombreTerminal}`,

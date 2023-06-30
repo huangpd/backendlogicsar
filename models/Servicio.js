@@ -83,6 +83,7 @@ const servicioSchema = mongoose.Schema(
       trim: true,
       require: true,
     },
+
     numeroContenedores: [
       {
         numeroContenedor: {

@@ -30,7 +30,7 @@ const nuevoServicioImportacion = async (req, res) => {
   const domicilio = await Terminales.findById(origenCarga);
   const destino = await Domicilios.findById(destinoCarga);
 
-  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "1" });
+  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "2" });
 
   const estadoViaje = await EstadosViajes.findOne({ numeroEstado: "1" });
 
@@ -73,6 +73,8 @@ const nuevoServicioImportacion = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
+        estadoServicio: servicio.estado,
+        notificado: "Sin Notificar",
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -106,6 +108,8 @@ const nuevoServicioImportacion = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
+              estadoServicio: servicio.estado,
+              notificado: "Sin Notificar",
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -141,16 +145,24 @@ const nuevoServicioImportacion = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
+          estadoServicio: servicio.estado,
+          notificado: "Sin Notificar",
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
     }
+
     cliente.servicios.push(servicioalmacenado._id);
     await servicioalmacenado.save();
     await actualizacion.save();
     await cliente.save();
+    const usuarios = await Usuario.find({
+      cliente: servicioalmacenado.cliente,
+    });
+
+    notificarRecepcionViaje(usuarios, servicioalmacenado);
 
     res.json(servicioalmacenado);
   } catch (error) {
@@ -171,7 +183,7 @@ const nuevoServicioExportacion = async (req, res) => {
   const destino = await Terminales.findById(destinoCarga);
   const domicilio = await Domicilios.findById(origenCarga);
 
-  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "1" });
+  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "2" });
 
   const estadoViaje = await EstadosViajes.findOne({ numeroEstado: "1" });
 
@@ -214,6 +226,8 @@ const nuevoServicioExportacion = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
+        estadoServicio: servicio.estado,
+        notificado: "Sin Notificar",
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -247,6 +261,8 @@ const nuevoServicioExportacion = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
+              estadoServicio: servicio.estado,
+              notificado: "Sin Notificar",
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -282,6 +298,8 @@ const nuevoServicioExportacion = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
+          estadoServicio: servicio.estado,
+          notificado: "Sin Notificar",
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
@@ -311,7 +329,7 @@ const nuevoTransito = async (req, res) => {
   const domicilio = await Terminales.findById(origenCarga);
   const destino = await Terminales.findById(destinoCarga);
 
-  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "1" });
+  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "2" });
 
   const estadoViaje = await EstadosViajes.findOne({ numeroEstado: "1" });
 
@@ -354,6 +372,8 @@ const nuevoTransito = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
+        estadoServicio: servicio.estado,
+        notificado: "Sin Notificar",
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -387,6 +407,8 @@ const nuevoTransito = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
+              estadoServicio: servicio.estado,
+              notificado: "Sin Notificar",
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -422,6 +444,7 @@ const nuevoTransito = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
+          estadoServicio: servicio.estado,
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
@@ -451,7 +474,7 @@ const nuevoServicioNacional = async (req, res) => {
   const domicilio = await Domicilios.findById(origenCarga);
   const destino = await Domicilios.findById(destinoCarga);
 
-  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "1" });
+  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "2" });
 
   const estadoViaje = await EstadosViajes.findOne({ numeroEstado: "1" });
 
@@ -494,6 +517,8 @@ const nuevoServicioNacional = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
+        estadoServicio: servicio.estado,
+        notificado: "Sin Notificar",
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -527,6 +552,8 @@ const nuevoServicioNacional = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
+              estadoServicio: servicio.estado,
+              notificado: "Sin Notificar",
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -562,6 +589,8 @@ const nuevoServicioNacional = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
+          estadoServicio: servicio.estado,
+          notificado: "Sin Notificar",
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
@@ -615,16 +644,17 @@ const notificarViaje = async (req, res) => {
 
   const usuarios = await Usuario.find({ cliente: servicio.cliente });
 
+  const estadosViaje = await EstadosViajes.find({ numeroEstado: 5 });
+
   actualizacion.icon = "EnvelopeIcon";
   actualizacion.description = Date.now();
   actualizacion.color = "text-blue-500";
   actualizacion.title = `Viajes Servicio ${servicio.numeroPedido} notificado`;
 
   for (const viajeId of viajeIds) {
+    // Buscar el viaje por su ID
+    const viaje = await Viajes.findById(viajeId);
     try {
-      // Buscar el viaje por su ID
-      const viaje = await Viajes.findById(viajeId);
-
       const {
         numeroContenedor,
         nombreChofer,
@@ -651,13 +681,23 @@ const notificarViaje = async (req, res) => {
 
       // Agregar el objeto al array informacionEnviar
       informacionEnviar.push(informacionViaje);
+
+      console.log("Valor antes de la asignación:", viaje.notificado);
+
+      // Asignar el valor manualmente al campo notificado en el modelo de Viaje
+      viaje.notificado = "Notificado";
+      const viajeGuardado = await viaje.save();
+
+      console.log("Valor después de la asignación:", viajeGuardado.notificado);
     } catch (error) {
       // Manejo de errores para cada iteración
       console.error(`Error al obtener el viaje con ID ${viajeId}:`, error);
     }
   }
   notificarViajes(usuarios, servicio, informacionEnviar);
+
   await actualizacion.save();
+  res.json({ msg: "Viaje Notificado Con Exito" });
 };
 
 const notificarAceptacion = async (req, res) => {
@@ -1072,6 +1112,32 @@ const nuevoEstadoServicio = async (req, res) => {
     }
   }
 };
+//FUNCION VIEJA PARA ACTUALIZAR EL ESTADO
+// const actualizarEstadoServicio = async (req, res) => {
+//   const { id } = req.params;
+//   const { estado } = req.body;
+//   const actualizacion = new Actualizaciones();
+//   const servicio = await Servicio.findById(id);
+
+//   if (servicio.estado === estado) {
+//     const error = new Error("Selecciona un estado distinto al ya guardado");
+//     return res.status(400).json({ msg: error.message });
+//   } else {
+//     servicio.estado = estado;
+//     try {
+//       actualizacion.icon = "ArrowPathIcon";
+//       actualizacion.description = Date.now();
+//       actualizacion.color = "text-red-300";
+//       actualizacion.title = `Servicio Nro ${servicio.numeroPedido} actualizado a estado ${servicio.estado}`;
+
+//       const estadoAlmacenado = await servicio.save();
+//       await actualizacion.save();
+//       res.json(estadoAlmacenado);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// };
 
 const actualizarEstadoServicio = async (req, res) => {
   const { id } = req.params;
@@ -1091,6 +1157,14 @@ const actualizarEstadoServicio = async (req, res) => {
       actualizacion.title = `Servicio Nro ${servicio.numeroPedido} actualizado a estado ${servicio.estado}`;
 
       const estadoAlmacenado = await servicio.save();
+
+      // Iterar sobre los viajes asociados al servicio y actualizar estadoServicio
+      const viajes = await Viajes.find({ servicio: servicio._id });
+      for (const viaje of viajes) {
+        viaje.estadoServicio = estado;
+        await viaje.save();
+      }
+
       await actualizacion.save();
       res.json(estadoAlmacenado);
     } catch (error) {
@@ -1110,18 +1184,19 @@ const actualizarEstadoViaje = async (req, res) => {
     return res.status(400).json({ msg: error.message });
   } else {
     viaje.estado = estado;
-    try {
-      actualizacion.icon = "ArrowPathIcon";
-      actualizacion.description = Date.now();
-      actualizacion.color = "text-red-300";
-      actualizacion.title = `Viaje Nro ${viaje.numeroDeViaje} actualizado a estado ${viaje.estado}`;
+  }
 
-      await actualizacion.save();
-      const estadoAlmacenado = await viaje.save();
-      res.json(estadoAlmacenado);
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    actualizacion.icon = "ArrowPathIcon";
+    actualizacion.description = Date.now();
+    actualizacion.color = "text-red-300";
+    actualizacion.title = `Viaje Nro ${viaje.numeroDeViaje} actualizado a estado ${viaje.estado}`;
+
+    await actualizacion.save();
+    const estadoAlmacenado = await viaje.save();
+    res.json({ msg: "Estado Actualizado" });
+  } catch (error) {
+    console.log(error);
   }
 };
 

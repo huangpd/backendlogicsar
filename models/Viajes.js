@@ -42,11 +42,18 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-
+    notificado: {
+      type: String,
+      trim: true,
+    },
     estado: {
       type: String,
       trim: true,
       require: true,
+    },
+    estadoServicio: {
+      type: String,
+      trim: true,
     },
     fechaOrigen: {
       type: String,
