@@ -27,12 +27,12 @@ export const emailRegistro = async (datos) => {
   //informacion del email
 
   const info = await transport.sendMail({
-    from: '"Logicsar - Bienvenid@!" <info@peopleco.com.ar>',
+    from: '"CarryOn - Bienvenid@!" <carryon.arg@gmail.com>',
     to: email,
     subject: "Alta de cuenta",
-    text: "Verifica tu cuenta en Logicsar",
+    text: "Verifica tu cuenta en CarryOn",
     html: `
-        <p>Hola ${nombre}, bienvenid@ a Logicsar</p>
+        <p>Hola ${nombre}, bienvenid@ a CarryOn</p>
         <p>Hemos creado tu cuenta para que puedas gestionar todos los servicios con nosotros y mucho mas. Solo debes configurar una contraseña y puedes hacerlo en el siguiente enlace: <a href='${process.env.FRONTEND_URL}/crear-password/${token}'>Configurar Pass</a></p>
 
         <p>Si no acabas de adquirir un servicio con nosotros, puedes ignorar este mensaje.</p>
@@ -63,7 +63,7 @@ export const emailOlvidePassword = async (datos) => {
   //informacion del email
 
   const info = await transport.sendMail({
-    from: '"People Coworking" <info@peopleco.com.ar>',
+    from: '"Carry On" <carryon.arg@gmail.com>',
     to: email,
     subject: "Reestablece tu Password",
     text: "Reestablece tu Password",
@@ -97,7 +97,7 @@ export const emailNuevoViajeProveedor = async (datos) => {
   //informacion del email
 
   const info = await transport.sendMail({
-    from: '"Logicsar" <info@peopleco.com.ar>',
+    from: '"CarryOn" <carryon.arg@gmail.com>',
     to: email,
     subject: "Nuevo Viaje!",
     text: "Tienes un nuevo viaje para confirmar",
@@ -128,7 +128,7 @@ export const emailNuevoViajeCliente = async (datos) => {
   //informacion del email
 
   const info = await transport.sendMail({
-    from: '"CarryOn" <info@peopleco.com.ar>',
+    from: '"CarryOn" <carryon.arg@gmail.com>',
     to: email,
     subject: "Nuevo Viaje Registrado!",
     text: "Hemos registrado su pedido",
@@ -170,7 +170,7 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
       } = servicio;
 
       const info = await transport.sendMail({
-        from: '"CarryOn" <info@peopleco.com.ar>',
+        from: '"CarryOn" <carryon.arg@gmail.com>',
         to: email,
         subject: `Pedido de Transporte - ${moment(fechaCarga).format(
           "dddd DD/MM"
@@ -234,7 +234,7 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
     } = servicio;
 
     const info = await transport.sendMail({
-      from: '"CarryOn" <info@peopleco.com.ar>',
+      from: '"CarryOn" <carryon.arg@gmail.com>',
       to: email,
       subject: `Pedido de Transporte - ${moment(fechaCarga).format(
         "dddd DD/MM"
@@ -327,7 +327,7 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
       } = servicio;
 
       const info = await transport.sendMail({
-        from: '"CarryOn" <info@peopleco.com.ar>',
+        from: '"CarryOn" <carryon.arg@gmail.com>',
         to: email,
         subject: `Pedido de Transporte Nro ${numeroPedido} | ${moment(
           fechaCarga
@@ -400,7 +400,7 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
     console.log(email);
 
     const info = await transport.sendMail({
-      from: '"CarryOn" <info@peopleco.com.ar>',
+      from: '"CarryOn" <carryon.arg@gmail.com>',
       to: email,
       subject: `Pedido de Transporte Nro ${numeroPedido} | ${moment(
         fechaCarga

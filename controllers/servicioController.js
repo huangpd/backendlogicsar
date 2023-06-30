@@ -45,7 +45,7 @@ const nuevoServicioImportacion = async (req, res) => {
   actualizacion.icon = "PlusCircleIcon";
   actualizacion.description = Date.now();
   actualizacion.color = "text-green-500";
-  actualizacion.title = `Servicio importacion Nro ${servicioalmacenado.numeroPedido} ingresado`;
+  actualizacion.title = `Servicio importacion Nro ${servicio.numeroPedido} ingresado`;
 
   try {
     const servicioalmacenado = await servicio.save();
