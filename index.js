@@ -18,24 +18,7 @@ dotenv.config();
 conectarDB();
 
 // Configurar CORS
-const whitelist = [process.env.FRONTEND_URL];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.includes(origin)) {
-      // Puede consultar la API
-      callback(null, true);
-    } else {
-      // No esta permitido su request
-      callback(new Error("Error de Cors"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE"], // Agrega los métodos utilizados en tu aplicación
-  allowedHeaders: ["Content-Type", "Authorization"], // Agrega los encabezados utilizados en tu aplicación
-  credentials: true, // Habilitar el manejo de solicitudes con cookies
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Routing
 app.use("/api/usuarios", router);
