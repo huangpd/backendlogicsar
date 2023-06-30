@@ -4,10 +4,8 @@ import cors from "cors";
 import conectarDB from "./config/db.js";
 import router from "./routes/usuarioRoutes.js";
 import clientesRouter from "./routes/clientesRoutes.js";
-
 import facturasRouter from "./routes/facturasRoutes.js";
 import proveedoresRouter from "./routes/proveedorRoutes.js";
-
 import contableRouter from "./routes/contableRoutes.js";
 import servicioRouter from "./routes/servicioRoutes.js";
 import minutasRouter from "./routes/minutasRoutes.js";
@@ -32,6 +30,9 @@ const corsOptions = {
       callback(new Error("Error de Cors"));
     }
   },
+  methods: ["GET", "POST", "PUT", "DELETE"], // Agrega los métodos utilizados en tu aplicación
+  allowedHeaders: ["Content-Type", "Authorization"], // Agrega los encabezados utilizados en tu aplicación
+  credentials: true, // Habilitar el manejo de solicitudes con cookies
 };
 
 app.use(cors(corsOptions));
