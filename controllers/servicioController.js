@@ -682,13 +682,9 @@ const notificarViaje = async (req, res) => {
       // Agregar el objeto al array informacionEnviar
       informacionEnviar.push(informacionViaje);
 
-      console.log("Valor antes de la asignación:", viaje.notificado);
-
       // Asignar el valor manualmente al campo notificado en el modelo de Viaje
       viaje.notificado = "Notificado";
       const viajeGuardado = await viaje.save();
-
-      console.log("Valor después de la asignación:", viajeGuardado.notificado);
     } catch (error) {
       // Manejo de errores para cada iteración
       console.error(`Error al obtener el viaje con ID ${viajeId}:`, error);
@@ -790,11 +786,12 @@ const viajesAyerSinCerrar = async (req, res) => {
     fechaHoy.setHours(0, 0, 0, 0);
     const fechaHoyString = fechaHoy.toISOString().split("T")[0];
 
-    // Realizar la búsqueda en la base de datos filtrando por la fecha anterior a hoy y estado no cerrado
+    // Realizar la búsqueda en la base de datos filtrando por la fecha anterior a hoy y estado no cerrado,
+    // y luego ordenar los resultados por fecha de la más próxima a la más lejana
     const viajes = await Viajes.find({
       estado: { $ne: "terminado" },
       fechaOrigen: { $lt: fechaHoyString },
-    });
+    }).sort({ fechaOrigen: 1 }); // Orden ascendente (de la más próxima a la más lejana)
 
     res.json(viajes);
   } catch (error) {
@@ -813,11 +810,12 @@ const viajesFuturosSinCerrar = async (req, res) => {
     fechaHoy.setHours(0, 0, 0, 0);
     const fechaHoyString = fechaHoy.toISOString().split("T")[0];
 
-    // Realizar la búsqueda en la base de datos filtrando por la fecha posterior a hoy y estado no cerrado
+    // Realizar la búsqueda en la base de datos filtrando por la fecha posterior a hoy y estado no cerrado,
+    // y luego ordenar los resultados por fecha de la más próxima a la más lejana
     const viajes = await Viajes.find({
       estado: { $ne: "terminado" },
       fechaOrigen: { $gt: fechaHoyString },
-    });
+    }).sort({ fechaOrigen: 1 }); // Orden ascendente (de la más próxima a la más lejana)
 
     res.json(viajes);
   } catch (error) {
@@ -918,8 +916,6 @@ const asignarEquipo = async (req, res) => {
   const { idSemi } = req.body;
   const viaje = await Viajes.findById(id);
   const actualizacion = new Actualizaciones();
-  console.log(id);
-  console.log(req.body);
 
   const chofer = await Choferes.findById(idChofer);
   const camion = await Camiones.findById(idCamion);
@@ -951,7 +947,6 @@ const asignarEquipo = async (req, res) => {
 };
 
 const aprobarEquipo = async (req, res) => {
-  console.log("apruebo");
   const { id } = req.params;
   const actualizacion = new Actualizaciones();
   const viaje = await Viajes.findById(id);
@@ -1244,7 +1239,7 @@ const obtenerEstadosViaje = async (req, res) => {
 const editarViaje = async (req, res) => {
   const { id } = req.params;
   const { tipoServicio } = req.body;
-  console.log(tipoServicio);
+
   const viaje = await Viajes.findById(id);
   const actualizacion = new Actualizaciones();
   if (!viaje) {
@@ -1332,7 +1327,6 @@ const obtenerActualizaciones = async (req, res) => {
       .limit(3); // Limitar el resultado a las últimas 5 actualizaciones
 
     res.json(actualizaciones);
-    console.log(actualizaciones);
   } catch (error) {
     console.log(error);
   }

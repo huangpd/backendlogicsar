@@ -110,7 +110,7 @@ const registrar = async (req, res) => {
     actualizacion.icon = "PencilSquareIcon";
     actualizacion.description = Date.now();
     actualizacion.color = "text-green-300";
-    actualizacion.title = `Se creo el usuario Nro ${usuario.nombre} ${usuario.apellido}`;
+    actualizacion.title = `Se creo el usuario ${usuario.nombre} ${usuario.apellido}`;
     await actualizacion.save();
     res.json({ msg: "Usuario Creado Correctamente." });
 
