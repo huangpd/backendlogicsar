@@ -1050,6 +1050,8 @@ const obtenerViaje = async (req, res) => {
   res.json(viaje);
 };
 
+//pepito
+
 const nuevaTerminal = async (req, res) => {
   const terminal = new Terminales(req.body);
   const actualizacion = new Actualizaciones();
