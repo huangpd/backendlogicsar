@@ -7,8 +7,8 @@ moment.locale("es");
 
 // TODO: mejorar los html de los mail que llegan a los clientes.
 
-export const emailRegistro = (datos) => {
-  return new Promise((resolve, reject) => {
+export const emailRegistro = async (datos) => {
+  return await new Promise((resolve, reject) => {
     const { email, nombre, token } = datos;
 
     const hemail = process.env.EMAIL;
