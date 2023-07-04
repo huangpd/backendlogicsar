@@ -210,7 +210,7 @@ const olvidePassword = async (req, res) => {
     await usuario.save();
 
     //Enviar Email de recupero de contraseña
-    emailOlvidePassword({
+    await emailOlvidePassword({
       email: usuario.email,
       nombre: usuario.nombre,
       token: usuario.token,

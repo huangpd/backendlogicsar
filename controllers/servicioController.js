@@ -161,8 +161,8 @@ const nuevoServicioImportacion = async (req, res) => {
     const usuarios = await Usuario.find({
       cliente: servicioalmacenado.cliente,
     });
-
-    notificarRecepcionViaje(usuarios, servicioalmacenado);
+    console.log(usuarios, servicioalmacenado);
+    await notificarRecepcionViaje(usuarios, servicioalmacenado);
 
     res.json(servicioalmacenado);
   } catch (error) {
@@ -690,7 +690,7 @@ const notificarViaje = async (req, res) => {
       console.error(`Error al obtener el viaje con ID ${viajeId}:`, error);
     }
   }
-  notificarViajes(usuarios, servicio, informacionEnviar);
+  await notificarViajes(usuarios, servicio, informacionEnviar);
 
   await actualizacion.save();
   res.json({ msg: "Viaje Notificado Con Exito" });
@@ -709,7 +709,7 @@ const notificarAceptacion = async (req, res) => {
   actualizacion.color = "text-blue-500";
   actualizacion.title = `Notificacion Aceptacion de servicio Nro ${servicio.numeroPedido} enviada`;
 
-  notificarRecepcionViaje(usuarios, servicio);
+  await notificarRecepcionViaje(usuarios, servicio);
 
   servicio.estado = estadoServicio.estado;
 
