@@ -43,6 +43,7 @@ export const emailRegistro = async (datos) => {
         <p>Equipo Logicsar</p>
     `,
   });
+  console.log(info);
 };
 
 export const emailOlvidePassword = async (datos) => {
