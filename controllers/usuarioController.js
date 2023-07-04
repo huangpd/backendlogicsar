@@ -101,7 +101,7 @@ const registrar = async (req, res) => {
     const usuarioAlmacenado = await usuario.save();
 
     // Enviamos el email de confirmacion
-    emailRegistro({
+    await emailRegistro({
       email: usuario.email,
       nombre: usuario.nombre,
       token: usuario.token,
