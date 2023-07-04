@@ -8,46 +8,40 @@ moment.locale("es");
 // TODO: mejorar los html de los mail que llegan a los clientes.
 
 export const emailRegistro = async (datos) => {
-  return await new Promise((resolve, reject) => {
-    const { email, nombre, token } = datos;
+  const { email, nombre, token } = datos;
 
-    const hemail = process.env.EMAIL;
-    const hpass = process.env.PASSWORD;
-    const host = process.env.HOST;
-    const port = process.env.EMAIL_PORT;
+  const hemail = process.env.EMAIL;
+  const hpass = process.env.PASSWORD;
+  const host = process.env.HOST;
+  const port = process.env.EMAIL_PORT;
 
-    const transport = nodemailer.createTransport({
-      host: host,
-      port: port,
-      auth: {
-        user: hemail,
-        pass: hpass,
-      },
-    });
+  const transport = nodemailer.createTransport({
+    host: host,
+    port: port,
+    auth: {
+      user: hemail,
+      pass: hpass,
+    },
+  });
 
-    // Información del email
-    const mailOptions = {
-      from: '"CarryOn - Bienvenid@!" <carryon.arg@gmail.com>',
-      to: email,
-      cc: "carryon.arg@gmail.com",
-      subject: "Alta de cuenta",
-      text: "Verifica tu cuenta en CarryOn",
-      html: `
+  //informacion del email
+
+  const info = await transport.sendMail({
+    from: '"CarryOn - Bienvenid@!" <carryon.arg@gmail.com>',
+    to: email,
+    cc: "carryon.arg@gmail.com",
+
+    subject: "Alta de cuenta",
+    text: "Verifica tu cuenta en CarryOn",
+    html: `
         <p>Hola ${nombre}, bienvenid@ a CarryOn</p>
         <p>Hemos creado tu cuenta para que puedas gestionar todos los servicios con nosotros y mucho mas. Solo debes configurar una contraseña y puedes hacerlo en el siguiente enlace: <a href='${process.env.FRONTEND_URL}/crear-password/${token}'>Configurar Pass</a></p>
-        <p>Si no acabas de adquirir un servicio con nosotros, puedes ignorar este mensaje.</p>
-        <p>Que tengas un gran día!</p>
-        <p>Equipo Logicsar</p>
-      `,
-    };
 
-    transport.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(info);
-      }
-    });
+        <p>Si no acabas de adquirir un servicio con nosotros, puedes ignorar este mensaje.</p>
+
+        <p>Que tengas un gran dia!</p>
+        <p>Equipo Logicsar</p>
+    `,
   });
 };
 
