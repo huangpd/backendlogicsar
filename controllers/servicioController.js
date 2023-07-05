@@ -26,7 +26,7 @@ const nuevoServicioImportacion = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
-
+  console.log(req.body);
   const domicilio = await Terminales.findById(origenCarga);
   const destino = await Domicilios.findById(destinoCarga);
 
@@ -45,10 +45,10 @@ const nuevoServicioImportacion = async (req, res) => {
   actualizacion.icon = "PlusCircleIcon";
   actualizacion.description = Date.now();
   actualizacion.color = "text-green-500";
-  actualizacion.title = `Servicio importacion Nro ${servicio.numeroPedido} ingresado`;
 
   try {
     const servicioalmacenado = await servicio.save();
+    actualizacion.title = `Servicio importacion Nro ${servicioalmacenado.numeroPedido} ingresado`;
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||
@@ -177,6 +177,7 @@ const nuevoServicioExportacion = async (req, res) => {
   const { destinoCarga } = req.body;
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  console.log(req.body);
 
   const actualizacion = new Actualizaciones();
 
@@ -325,6 +326,7 @@ const nuevoTransito = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  console.log(req.body);
 
   const domicilio = await Terminales.findById(origenCarga);
   const destino = await Terminales.findById(destinoCarga);
@@ -470,6 +472,7 @@ const nuevoServicioNacional = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  console.log(req.body);
 
   const domicilio = await Domicilios.findById(origenCarga);
   const destino = await Domicilios.findById(destinoCarga);
@@ -489,10 +492,10 @@ const nuevoServicioNacional = async (req, res) => {
   actualizacion.icon = "PlusCircleIcon";
   actualizacion.description = Date.now();
   actualizacion.color = "text-green-500";
-  actualizacion.title = `Servicio Nacional Nro ${servicioalmacenado.numeroPedido} ingresado`;
 
   try {
     const servicioalmacenado = await servicio.save();
+    actualizacion.title = `Servicio Nacional Nro ${servicioalmacenado.numeroPedido} ingresado`;
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||

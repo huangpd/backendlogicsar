@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import mongooseSequence from "mongoose-sequence";
 
 const servicioSchema = mongoose.Schema(
   {
     numeroPedido: {
-      type: String,
+      type: Number,
       trim: true,
-      require: true,
+      unique: true,
     },
     cliente: [
       {
@@ -154,28 +155,9 @@ const servicioSchema = mongoose.Schema(
   }
 );
 
-servicioSchema.pre("save", async function (next) {
-  if (!this.isNew) {
-    next();
-  }
-
-  try {
-    const ultimoServicio = await Servicio.findOne(
-      {},
-      {},
-      { sort: { numeroPedido: -1 } }
-    );
-
-    if (ultimoServicio) {
-      this.numeroPedido = parseInt(ultimoServicio.numeroPedido) + 1;
-    } else {
-      this.numeroPedido = 1;
-    }
-
-    next();
-  } catch (error) {
-    next(error);
-  }
+servicioSchema.plugin(mongooseSequence(mongoose), {
+  inc_field: "numeroPedido",
+  start_seq: 60000,
 });
 
 const Servicio = mongoose.model("Servicio", servicioSchema);
