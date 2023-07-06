@@ -20,6 +20,16 @@ conectarDB();
 // Configurar CORS
 app.use(cors());
 
+// Middleware para contar los requests
+let requestCount = 0;
+app.use((req, res, next) => {
+  requestCount++;
+  console.log(
+    `Request: ${req.method} ${req.originalUrl} req nro: ${requestCount}`
+  );
+  next();
+});
+
 // Routing
 app.use("/api/usuarios", router);
 app.use("/api/clientes", clientesRouter);
@@ -33,4 +43,5 @@ const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
+  console.log(`Número total de requests realizados hoy: ${requestCount}`);
 });
