@@ -98,25 +98,18 @@ const comprobarProveedor = async (req, res) => {
 
 const nuevoChofer = async (req, res) => {
   const { id } = req.params;
-  const { camion } = req.body;
+
   const actualizacion = new Actualizaciones();
   const chofer = new Choferes(req.body);
   const proveedor = await Proveedor.findById(id);
-  const transporte = await Camiones.findById(camion);
 
   chofer.creador = req.usuario._id;
   chofer.proveedor = proveedor._id;
-  chofer.camion = transporte._id;
-  transporte.nombreChofer = req.body.nombre + " " + req.body.apellido;
-  chofer.modeloCamion = transporte.modelo + " " + transporte.patente;
 
   try {
     const choferAlmacenado = await chofer.save();
-
     proveedor.choferes = choferAlmacenado._id;
-    transporte.chofer = choferAlmacenado._id;
     const proveedorAlmacenado = await proveedor.save();
-    const transporteAlmacenado = await transporte.save();
 
     actualizacion.icon = "UserGroupIcon";
     actualizacion.description = Date.now();

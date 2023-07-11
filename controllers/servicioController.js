@@ -766,9 +766,9 @@ const viajesHoy = async (req, res) => {
     fechaHoy.setHours(0, 0, 0, 0);
     const fechaHoyString = fechaHoy.toISOString().split("T")[0];
 
-    // Realizar la búsqueda en la base de datos filtrando por la fecha de hoy
+    // Realizar la búsqueda en la base de datos filtrando por la fecha de hoy y estado no cerrado
     const viajes = await Viajes.find({
-      estado: { $ne: "terminado" },
+      estado: { $ne: "Terminado" },
       fechaOrigen: fechaHoyString,
     });
 
@@ -792,7 +792,7 @@ const viajesAyerSinCerrar = async (req, res) => {
     // Realizar la búsqueda en la base de datos filtrando por la fecha anterior a hoy y estado no cerrado,
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana
     const viajes = await Viajes.find({
-      estado: { $ne: "terminado" },
+      estado: { $ne: "Terminado" },
       fechaOrigen: { $lt: fechaHoyString },
     }).sort({ fechaOrigen: 1 }); // Orden ascendente (de la más próxima a la más lejana)
 
@@ -816,7 +816,7 @@ const viajesFuturosSinCerrar = async (req, res) => {
     // Realizar la búsqueda en la base de datos filtrando por la fecha posterior a hoy y estado no cerrado,
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana
     const viajes = await Viajes.find({
-      estado: { $ne: "terminado" },
+      estado: { $ne: "Terminado" },
       fechaOrigen: { $gt: fechaHoyString },
     }).sort({ fechaOrigen: 1 }); // Orden ascendente (de la más próxima a la más lejana)
 
@@ -1337,6 +1337,73 @@ const obtenerActualizaciones = async (req, res) => {
   }
 };
 
+const busqueda = async (req, res) => {
+  console.log("quiero buscar");
+  try {
+    // Obtén el término de búsqueda del cuerpo de la solicitud (puedes ajustar esto según tu implementación)
+    const { terminoBusqueda } = req.body;
+    let query = {
+      $or: [
+        { nombreCliente: { $regex: terminoBusqueda, $options: "i" } },
+        { destinoCarga: { $regex: terminoBusqueda, $options: "i" } },
+        { observaciones: { $regex: terminoBusqueda, $options: "i" } },
+        { nombreTerminal: { $regex: terminoBusqueda, $options: "i" } },
+        { nombreProveedor: { $regex: terminoBusqueda, $options: "i" } },
+        { nombreChofer: { $regex: terminoBusqueda, $options: "i" } },
+        { numeroCliente: { $regex: terminoBusqueda, $options: "i" } },
+      ],
+    };
+
+    let queryClientes = {
+      $or: [
+        { nombre: { $regex: terminoBusqueda, $options: "i" } },
+        { cuit: { $regex: terminoBusqueda, $options: "i" } },
+        { mailFactura: { $regex: terminoBusqueda, $options: "i" } },
+      ],
+    };
+
+    let queryProveedores = {
+      $or: [
+        { nombre: { $regex: terminoBusqueda, $options: "i" } },
+        { cuit: { $regex: terminoBusqueda, $options: "i" } },
+        { email: { $regex: terminoBusqueda, $options: "i" } },
+      ],
+    };
+
+    let queryviajes = {
+      $or: [
+        { numeroDeViaje: { $regex: terminoBusqueda, $options: "i" } },
+        { numeroContenedor: { $regex: terminoBusqueda, $options: "i" } },
+      ],
+    };
+
+    // Verifica si el término de búsqueda es un número válido utilizando una expresión regular
+    if (/^\d+$/.test(terminoBusqueda)) {
+      const numeroPedido = parseInt(terminoBusqueda);
+      query.$or.push({ numeroPedido: numeroPedido });
+    }
+
+    // Construye la consulta de búsqueda utilizando el término proporcionado
+    const servicios = await Servicio.find(query);
+    const clientes = await Cliente.find(queryClientes);
+    const proveedores = await Proveedor.find(queryProveedores);
+    const viajes = await Viajes.find(queryviajes);
+
+    res.json({
+      servicios: servicios,
+      clientes: clientes,
+      proveedores: proveedores,
+      viajes: viajes,
+    });
+
+    console.log(servicios);
+  } catch (error) {
+    // Manejo de errores
+    console.error(error);
+    res.status(500).json({ message: "Error al buscar los servicios" });
+  }
+};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -1372,4 +1439,5 @@ export {
   notificarViaje,
   notificarAceptacion,
   obtenerActualizaciones,
+  busqueda,
 };

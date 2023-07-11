@@ -37,6 +37,7 @@ import {
   notificarViaje,
   notificarAceptacion,
   obtenerActualizaciones,
+  busqueda,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -60,6 +61,8 @@ router.get("/obtener-viajes-futuro/", checkAuth, viajesFuturosSinCerrar);
 
 router.get("/obtener-estados-servicio", checkAuth, obtenerEstadosServicio);
 router.get("/obtener-estados-viaje", checkAuth, obtenerEstadosViaje);
+
+router.post("/buscar", checkAuth, busqueda);
 
 router.get("/:id", checkAuth, obtenerServicio);
 router.get(

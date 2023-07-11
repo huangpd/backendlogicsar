@@ -200,14 +200,16 @@ const editarCliente = async (req, res) => {
 
   cliente.tipo = req.body.tipo || cliente.tipo;
   cliente.nombre = req.body.nombre || cliente.nombre;
-  cliente.mailFactura = req.body.mailFactura || cliente.mailFactura;
+  cliente.cuit = req.body.cuit || cliente.cuit;
   cliente.domicilio = req.body.domicilio || cliente.domicilio;
-  cliente.fechaVencimiento =
-    req.body.fechaVencimiento || cliente.fechaVencimiento;
+  cliente.localidad = req.body.localidad || cliente.localidad;
+  cliente.provincia = req.body.provincia || cliente.provincia;
+  cliente.mailFactura = req.body.mailFactura || cliente.mailFactura;
+  cliente.telefono = req.body.telefono || cliente.telefono;
 
   try {
-    const usuarioAlmacenado = await cliente.save();
-    res.json(usuarioAlmacenado);
+    const clienteActualizado = await cliente.save();
+    res.json(clienteActualizado);
   } catch (error) {
     console.log(error);
   }
