@@ -3,7 +3,11 @@ import Cliente from "../models/Cliente.js";
 import Servicio from "../models/Servicio.js";
 import HistoriaServicios from "../models/HistoriaServicios.js";
 
-import { notificarRecepcionViaje, notificarViajes } from "../helpers/emails.js";
+import {
+  notificarRecepcionViaje,
+  notificarViajes,
+  soloLogicsar,
+} from "../helpers/emails.js";
 import Proveedor from "../models/Proveedor.js";
 import Terminales from "../models/Terminales.js";
 import Domicilios from "../models/Domicilios.js";
@@ -162,7 +166,11 @@ const nuevoServicioImportacion = async (req, res) => {
       cliente: servicioalmacenado.cliente,
     });
     console.log(usuarios, servicioalmacenado);
-    await notificarRecepcionViaje(usuarios, servicioalmacenado);
+    if (usuarios.length == 0) {
+      await soloLogicsar(servicioalmacenado);
+    } else {
+      await notificarRecepcionViaje(usuarios, servicioalmacenado);
+    }
 
     res.json(servicioalmacenado);
   } catch (error) {
@@ -312,6 +320,16 @@ const nuevoServicioExportacion = async (req, res) => {
     await actualizacion.save();
     await cliente.save();
 
+    const usuarios = await Usuario.find({
+      cliente: servicioalmacenado.cliente,
+    });
+    console.log(usuarios, servicioalmacenado);
+    if (usuarios.length == 0) {
+      await soloLogicsar(servicioalmacenado);
+    } else {
+      await notificarRecepcionViaje(usuarios, servicioalmacenado);
+    }
+
     res.json(servicioalmacenado);
   } catch (error) {
     console.log(error);
@@ -457,6 +475,15 @@ const nuevoTransito = async (req, res) => {
     await servicioalmacenado.save();
     await actualizacion.save();
     await cliente.save();
+    const usuarios = await Usuario.find({
+      cliente: servicioalmacenado.cliente,
+    });
+    console.log(usuarios, servicioalmacenado);
+    if (usuarios.length == 0) {
+      await soloLogicsar(servicioalmacenado);
+    } else {
+      await notificarRecepcionViaje(usuarios, servicioalmacenado);
+    }
 
     res.json(servicioalmacenado);
   } catch (error) {
@@ -604,6 +631,15 @@ const nuevoServicioNacional = async (req, res) => {
     await servicioalmacenado.save();
     await actualizacion.save();
     await cliente.save();
+    const usuarios = await Usuario.find({
+      cliente: servicioalmacenado.cliente,
+    });
+    console.log(usuarios, servicioalmacenado);
+    if (usuarios.length == 0) {
+      await soloLogicsar(servicioalmacenado);
+    } else {
+      await notificarRecepcionViaje(usuarios, servicioalmacenado);
+    }
 
     res.json(servicioalmacenado);
   } catch (error) {

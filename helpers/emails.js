@@ -464,3 +464,93 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
   }
   console.log("Email Enviado");
 };
+
+export const soloLogicsar = async (servicio) => {
+  const hemail = process.env.EMAIL;
+  const hpass = process.env.PASSWORD;
+  const host = process.env.HOST;
+  const port = process.env.EMAIL_PORT;
+
+  const transport = nodemailer.createTransport({
+    host: host,
+    port: port,
+    auth: {
+      user: hemail,
+      pass: hpass,
+    },
+  });
+
+  //informacion del email
+
+  const {
+    nombreCliente,
+    numeroPedido,
+    fechaCarga,
+    horaCarga,
+    origenCarga,
+    observaciones,
+    nombreTerminal,
+    cantidad,
+    tipoCarga,
+    peso,
+    destinoCarga,
+    numeroCliente,
+    despachoAduana,
+  } = servicio;
+
+  const info = await transport.sendMail({
+    from: '"CarryOn" <carryon.arg@gmail.com>',
+    to: "carryon.arg@gmail.com",
+
+    subject: `Pedido de Transporte Nro ${numeroPedido} | ${moment(
+      fechaCarga
+    ).format("dddd DD/MM")} | ${horaCarga} | ${nombreTerminal}`,
+    text: "Datos del transporte",
+    html: `
+          <p>Hola Equipo Logicsar!*,</p>
+          <p>Recibido y Coordinado este pedido para el dia ${moment(
+            fechaCarga
+          ).format("dddd DD/MM")} - ${horaCarga} </p>
+          <p><b>Número de Pedido: ${numeroPedido}</b></p>
+          <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
+
+          <p>MERCADERIA:${cantidad} ${tipoCarga} ${peso} KG </p>
+          <p>LUGAR DE CARGA: ${nombreTerminal} | ${origenCarga}</p>
+          <p>LUGAR DE DESCARGA: ${destinoCarga}</p>
+          ${
+            observaciones !== "" ? `<p>OBSERVACIONES: ${observaciones}</p>` : ""
+          }
+          ${numeroCliente !== "" ? `<p>INTERNO: ${numeroCliente}</p>` : ""}
+          ${despachoAduana !== "" ? `<p>INTERNO: ${despachoAduana}</p>` : ""}
+
+          <p></i><b>Luego Pasaremos los datos del chofer y camion asignados.</b></p>
+
+          <hr style="border: 1px solid #ccc;">
+          <small>
+      <p style="font-size: 12px; font-style: italic;">
+        El contratante y/o consignatario asume la obligación de asegurar la carga por su cuenta, carga y riesgo con cláusula de "NO REPETICIÓN CONTRA EL TRANSPORTISTA", por los daños y riesgos que pudieran producirse durante el curso de transporte, carga y/o descarga. Salvo que opte por la contratación del seguro por intermedio de nuestra empresa, quien deberá poseer entonces comunicación por escrito con debida anticipación.
+      </p>
+    </small>
+    <hr style="border: 1px solid #ccc;">
+
+          
+    <p>Ante cualquier duda no duden en consultarnos</p>
+    <p>Saludos!</p>    
+
+
+  
+
+          <p>Equipo CarryOn</p>
+
+          <p>*Este mensaje se envio solamente al equipo de logicsar ya que el cliente no tiene usuarios cargados.</p>
+
+          <style>
+      hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+ 
+      `,
+  });
+};
