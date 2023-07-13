@@ -5,6 +5,7 @@ import HistoriaServicios from "../models/HistoriaServicios.js";
 
 import {
   notificarRecepcionViaje,
+  notificarViajeSoloLogicsar,
   notificarViajes,
   soloLogicsar,
 } from "../helpers/emails.js";
@@ -729,8 +730,13 @@ const notificarViaje = async (req, res) => {
       console.error(`Error al obtener el viaje con ID ${viajeId}:`, error);
     }
   }
-  await notificarViajes(usuarios, servicio, informacionEnviar);
-
+  if (usuarios.length == 0) {
+    await notificarViajes(usuarios, servicio, informacionEnviar);
+  } else {
+    await notificarViajeSoloLogicsar(servicio, informacionEnviar);
+  }
+  servicio.notificar = "Notificado";
+  await servicio.save();
   await actualizacion.save();
   res.json({ msg: "Viaje Notificado Con Exito" });
 };

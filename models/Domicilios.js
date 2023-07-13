@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const domiciliosSchema = mongoose.Schema(
   {
+    fantasia: {
+      type: String,
+      trim: true,
+    },
     direccion: {
       type: String,
       trim: true,

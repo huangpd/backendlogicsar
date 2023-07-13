@@ -554,3 +554,79 @@ export const soloLogicsar = async (servicio) => {
       `,
   });
 };
+
+export const notificarViajeSoloLogicsar = async (servicio, viajes) => {
+  const hemail = process.env.EMAIL;
+  const hpass = process.env.PASSWORD;
+  const host = process.env.HOST;
+  const port = process.env.EMAIL_PORT;
+
+  const transport = nodemailer.createTransport({
+    host: host,
+    port: port,
+    auth: {
+      user: hemail,
+      pass: hpass,
+    },
+  });
+
+  const { nombreCliente, numeroPedido, fechaCarga, horaCarga, origenCarga } =
+    servicio;
+
+  const info = await transport.sendMail({
+    from: '"CarryOn" <carryon.arg@gmail.com>',
+    to: "carryon.arg@gmail.com",
+    cc: "carryon.arg@gmail.com",
+    subject: `Pedido de Transporte - ${moment(fechaCarga).format(
+      "dddd DD/MM"
+    )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
+    text: "Datos del transporte",
+    html: `
+          <p>Hola Equipo Logicsar **,</p>
+          <p>Los datos de los choferes y camiones asignados para esta operacion son:</p>
+          <p><b>Número de Pedido: ${numeroPedido}</b></p>
+          <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
+
+          <table style="border-collapse: separate; border-spacing: 0 8px; ">
+       
+          <tr>
+            <th style="background-color: #ccc; padding: 8px;">NUM DE VIAJE</th>
+            <th style="background-color: #ccc; padding: 8px;">NOMBRE Y APELLIDO</th>
+            <th style="background-color: #ccc; padding: 8px;">DNI</th>
+            <th style="background-color: #ccc; padding: 8px;">CAMION/SEMI</th>
+            <th style="background-color: #ccc; padding: 8px;">CELULAR</th>
+            <th style="background-color: #000; color: #fff; padding: 8px;">REFERENCIA</th>
+            <th style="background-color: #000; color: #fff; padding: 8px;">CONTENEDOR</th>
+          </tr>
+          ${viajes
+            .map(
+              (viaje) => `
+            <tr>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.numeroDeViaje}</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.nombreChofer}</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.dni}</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.patenteCamion} / ${viaje.patenteSemi}</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.telefono}</td>
+              <td style="border-bottom: 1px solid #ccc;  padding: 8px;">aaa2233</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.numeroContenedor}</td>
+            </tr>      
+          `
+            )
+            .join("")}
+        </table>
+   
+        
+<p> *Los camiones estaran el dia ${moment(fechaCarga).format(
+      "dddd DD/MM"
+    )} a las ${horaCarga} en ${origenCarga}.</p>
+
+     <p>Ante cualquier duda no duden en consultarnos</p>
+     <p>Saludos!</p>    
+
+          <p>Equipo CarryOn</p>
+          <p>*Este mensaje se envio solamente al equipo de logicsar ya que el cliente no tiene usuarios cargados.</p>
+
+      `,
+  });
+  console.log(info);
+};
