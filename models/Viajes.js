@@ -51,6 +51,11 @@ const viajesSchema = mongoose.Schema(
       trim: true,
       require: true,
     },
+    estado2: {
+      type: String,
+      trim: true,
+      require: true,
+    },
     estadoServicio: {
       type: String,
       trim: true,
@@ -148,6 +153,7 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+
     chofer: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -187,12 +193,22 @@ const viajesSchema = mongoose.Schema(
       trim: true,
       require: true,
     },
-    // semi: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Clientes",
-    //   },
-    // ],
+    adicionales: {
+      type: String,
+      trim: true,
+    },
+    fechaTerminacion: {
+      type: String,
+      trim: true,
+    },
+    horaTerminacion: {
+      type: String,
+      trim: true,
+    },
+    diasDemora: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

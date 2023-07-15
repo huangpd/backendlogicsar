@@ -31,7 +31,6 @@ const nuevoServicioImportacion = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
-  console.log(req.body);
   const domicilio = await Terminales.findById(origenCarga);
   const destino = await Domicilios.findById(destinoCarga);
 
@@ -115,6 +114,7 @@ const nuevoServicioImportacion = async (req, res) => {
               pesoCarga: servicioalmacenado.peso,
               estadoServicio: servicio.estado,
               notificado: "Sin Notificar",
+              observaciones: servicioalmacenado.observaciones,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -152,6 +152,7 @@ const nuevoServicioImportacion = async (req, res) => {
           pesoCarga: servicioalmacenado.peso,
           estadoServicio: servicio.estado,
           notificado: "Sin Notificar",
+          observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
@@ -238,6 +239,7 @@ const nuevoServicioExportacion = async (req, res) => {
         pesoCarga: servicioalmacenado.peso,
         estadoServicio: servicio.estado,
         notificado: "Sin Notificar",
+        observaciones: servicioalmacenado.observaciones,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -310,6 +312,7 @@ const nuevoServicioExportacion = async (req, res) => {
           pesoCarga: servicioalmacenado.peso,
           estadoServicio: servicio.estado,
           notificado: "Sin Notificar",
+          observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
@@ -395,6 +398,7 @@ const nuevoTransito = async (req, res) => {
         pesoCarga: servicioalmacenado.peso,
         estadoServicio: servicio.estado,
         notificado: "Sin Notificar",
+        observaciones: servicioalmacenado.observaciones,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -430,6 +434,7 @@ const nuevoTransito = async (req, res) => {
               pesoCarga: servicioalmacenado.peso,
               estadoServicio: servicio.estado,
               notificado: "Sin Notificar",
+              observaciones: servicioalmacenado.observaciones,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -466,6 +471,7 @@ const nuevoTransito = async (req, res) => {
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
           estadoServicio: servicio.estado,
+          observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
@@ -550,6 +556,7 @@ const nuevoServicioNacional = async (req, res) => {
         pesoCarga: servicioalmacenado.peso,
         estadoServicio: servicio.estado,
         notificado: "Sin Notificar",
+        observaciones: servicioalmacenado.observaciones,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -585,6 +592,7 @@ const nuevoServicioNacional = async (req, res) => {
               pesoCarga: servicioalmacenado.peso,
               estadoServicio: servicio.estado,
               notificado: "Sin Notificar",
+              observaciones: servicioalmacenado.observaciones,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -622,6 +630,7 @@ const nuevoServicioNacional = async (req, res) => {
           pesoCarga: servicioalmacenado.peso,
           estadoServicio: servicio.estado,
           notificado: "Sin Notificar",
+          observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
 
@@ -777,9 +786,19 @@ const obtenerServicio = async (req, res) => {
 };
 
 const obtenerTodosLosServicios = async (req, res) => {
-  const servicios = await Servicio.find();
+  try {
+    const servicios = await Servicio.find({
+      estado: "Terminado",
+      estado2: { $ne: "eliminado" },
+    });
 
-  res.json(servicios);
+    res.json(servicios);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Ocurrió un error al obtener los servicios" });
+  }
 };
 
 const obtenerServiciosHoy = async (req, res) => {
@@ -811,6 +830,9 @@ const viajesHoy = async (req, res) => {
     // Realizar la búsqueda en la base de datos filtrando por la fecha de hoy y estado no cerrado
     const viajes = await Viajes.find({
       estado: { $ne: "Terminado" },
+      estado2: { $ne: "eliminado" },
+
+      // estado: { $ne: "eliminado" },
       fechaOrigen: fechaHoyString,
     });
 
@@ -835,6 +857,8 @@ const viajesAyerSinCerrar = async (req, res) => {
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana
     const viajes = await Viajes.find({
       estado: { $ne: "Terminado" },
+      estado2: { $ne: "eliminado" },
+
       fechaOrigen: { $lt: fechaHoyString },
     }).sort({ fechaOrigen: 1 }); // Orden ascendente (de la más próxima a la más lejana)
 
@@ -859,6 +883,8 @@ const viajesFuturosSinCerrar = async (req, res) => {
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana
     const viajes = await Viajes.find({
       estado: { $ne: "Terminado" },
+      estado2: { $ne: "eliminado" },
+
       fechaOrigen: { $gt: fechaHoyString },
     }).sort({ fechaOrigen: 1 }); // Orden ascendente (de la más próxima a la más lejana)
 
@@ -1018,7 +1044,10 @@ const obtenerServiciosCliente = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const servicios = await Servicio.find({ cliente: id });
+    const servicios = await Servicio.find({
+      cliente: id,
+      estado2: { $ne: "eliminado" },
+    });
     res.json(servicios);
   } catch (error) {
     console.error(error);
@@ -1032,7 +1061,10 @@ const obtenerViajesServicio = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const viajes = await Viajes.find({ servicio: id });
+    const viajes = await Viajes.find({
+      servicio: id,
+      estado2: { $ne: "eliminado" },
+    });
     res.json(viajes);
   } catch (error) {
     console.error(error);
@@ -1154,32 +1186,6 @@ const nuevoEstadoServicio = async (req, res) => {
     }
   }
 };
-//FUNCION VIEJA PARA ACTUALIZAR EL ESTADO
-// const actualizarEstadoServicio = async (req, res) => {
-//   const { id } = req.params;
-//   const { estado } = req.body;
-//   const actualizacion = new Actualizaciones();
-//   const servicio = await Servicio.findById(id);
-
-//   if (servicio.estado === estado) {
-//     const error = new Error("Selecciona un estado distinto al ya guardado");
-//     return res.status(400).json({ msg: error.message });
-//   } else {
-//     servicio.estado = estado;
-//     try {
-//       actualizacion.icon = "ArrowPathIcon";
-//       actualizacion.description = Date.now();
-//       actualizacion.color = "text-red-300";
-//       actualizacion.title = `Servicio Nro ${servicio.numeroPedido} actualizado a estado ${servicio.estado}`;
-
-//       const estadoAlmacenado = await servicio.save();
-//       await actualizacion.save();
-//       res.json(estadoAlmacenado);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   }
-// };
 
 const actualizarEstadoServicio = async (req, res) => {
   const { id } = req.params;
@@ -1283,6 +1289,61 @@ const obtenerEstadosViaje = async (req, res) => {
   res.json(estados);
 };
 
+const filtrarViajes = async (req, res) => {
+  console.log("entro a filtrar viajes");
+  const { cliente, fecha, estado } = req.body;
+  let filtro = {};
+
+  if (cliente) {
+    if (fecha) {
+      if (estado) {
+        filtro = {
+          cliente: { $eq: cliente },
+          fechaOrigen: { $eq: fecha },
+          estado: { $eq: estado },
+        };
+      } else {
+        filtro = {
+          cliente: { $eq: cliente },
+          fechaOrigen: { $eq: fecha },
+        };
+      }
+    } else if (estado) {
+      filtro = {
+        cliente: { $eq: cliente },
+        estado: { $eq: estado },
+      };
+    } else {
+      filtro = {
+        cliente: { $eq: cliente },
+      };
+    }
+  } else if (fecha) {
+    if (estado) {
+      filtro = {
+        fechaOrigen: { $eq: fecha },
+        estado: { $eq: estado },
+      };
+    } else {
+      filtro = {
+        fechaOrigen: { $eq: fecha },
+      };
+    }
+  } else if (estado) {
+    filtro = {
+      estado: { $eq: estado },
+    };
+  }
+
+  try {
+    const viajesFiltrados = await Viajes.find(filtro);
+    console.log(viajesFiltrados);
+    res.json(viajesFiltrados);
+  } catch (error) {
+    res.status(500).json({ error: "Error al filtrar los viajes" });
+  }
+};
+
 const editarViaje = async (req, res) => {
   const { id } = req.params;
   const { tipoServicio } = req.body;
@@ -1299,6 +1360,7 @@ const editarViaje = async (req, res) => {
   viaje.horaOrigen = req.body.horaOrigen || viaje.horaOrigen;
   viaje.direccionRetorno = req.body.direccionRetorno || viaje.direccionRetorno;
   viaje.estado = req.body.estado || viaje.estado;
+  viaje.observaciones = req.body.observaciones || viaje.observaciones;
 
   if (tipoServicio == "importacion") {
     const origen = await Terminales.findById(req.body.domicilioOrigen);
@@ -1446,6 +1508,95 @@ const busqueda = async (req, res) => {
   }
 };
 
+const actualizarObservacionesServicio = async (req, res) => {
+  const { id } = req.params;
+  const { observaciones } = req.body;
+
+  console.log(observaciones);
+
+  const servicio = await Servicio.findById(id);
+
+  servicio.observaciones = observaciones;
+
+  await servicio.save();
+
+  res.json({ msg: "ok" });
+};
+
+const eliminarViaje = async (req, res) => {
+  const { id } = req.params;
+
+  const viaje = await Viajes.findById(id);
+
+  viaje.estado2 = "eliminado";
+
+  await viaje.save();
+
+  res.json({ msg: "Viaje Eliminado " });
+};
+
+const eliminarServicio = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const servicio = await Servicio.findById(id);
+
+    // Buscar en Viaje todos los documentos con el campo "servicio" igual a "id"
+    const viajes = await Viajes.find({ servicio: id });
+
+    servicio.estado2 = "eliminado";
+
+    await servicio.save();
+
+    if (viajes.length > 1) {
+      for (const viaje of viajes) {
+        viaje.estado2 = "eliminado";
+        await viaje.save();
+      }
+    } else if (viajes.length === 1) {
+      await Viajes.updateMany({ _id: viajes[0]._id }, { estado2: "eliminado" });
+    }
+
+    res.json({ msg: "Servicio eliminado", viajes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Ocurrió un error al eliminar el servicio" });
+  }
+};
+
+const terminarViaje = async (req, res) => {
+  const { id } = req.params;
+
+  const { adicionales } = req.body;
+  const { fechaTerminacion } = req.body;
+  const { horaTerminacion } = req.body;
+  const { diasDemora } = req.body;
+  const { observaciones } = req.body;
+
+  const viaje = await Viajes.findById(id);
+
+  viaje.adicionales = adicionales;
+  viaje.fechaTerminacion = fechaTerminacion;
+  viaje.horaTerminacion = horaTerminacion;
+  viaje.diasDemora = diasDemora;
+  viaje.observaciones = observaciones;
+
+  await viaje.save();
+
+  res.json({ msg: "Ok" });
+};
+
+const buscarTodosLosViajes = async (req, res) => {
+  try {
+    const viajes = await Viajes.find({ estado2: { $ne: "eliminado" } });
+
+    res.json(viajes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Ocurrió un error al obtener los viajes" });
+  }
+};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -1482,4 +1633,10 @@ export {
   notificarAceptacion,
   obtenerActualizaciones,
   busqueda,
+  actualizarObservacionesServicio,
+  eliminarViaje,
+  eliminarServicio,
+  terminarViaje,
+  buscarTodosLosViajes,
+  filtrarViajes,
 };

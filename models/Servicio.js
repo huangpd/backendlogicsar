@@ -61,11 +61,11 @@ const servicioSchema = mongoose.Schema(
       trim: true,
       require: true,
     },
-    observaciones: {
-      type: String,
-      trim: true,
-      require: true,
-    },
+    observaciones: [
+      {
+        type: String,
+      },
+    ],
     nombreTerminal: {
       type: String,
       trim: true,
@@ -107,6 +107,10 @@ const servicioSchema = mongoose.Schema(
       trim: true,
     },
     estado: {
+      type: String,
+      trim: true,
+    },
+    estado2: {
       type: String,
       trim: true,
     },

@@ -38,6 +38,12 @@ import {
   notificarAceptacion,
   obtenerActualizaciones,
   busqueda,
+  actualizarObservacionesServicio,
+  eliminarViaje,
+  eliminarServicio,
+  terminarViaje,
+  buscarTodosLosViajes,
+  filtrarViajes,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -54,6 +60,7 @@ router.get("/obtener-viaje/:id", checkAuth, obtenerViaje);
 router.get("/obtener-viajes-sin-notificar", checkAuth, obtenerSinNotificar);
 
 router.get("/obtener-actualizaciones", checkAuth, obtenerActualizaciones);
+router.get("/obtener-viajes-filtrados", checkAuth, filtrarViajes);
 
 router.get("/obtener-viajes-hoy/", checkAuth, viajesHoy);
 router.get("/obtener-viajes-ayer/", checkAuth, viajesAyerSinCerrar);
@@ -61,6 +68,8 @@ router.get("/obtener-viajes-futuro/", checkAuth, viajesFuturosSinCerrar);
 
 router.get("/obtener-estados-servicio", checkAuth, obtenerEstadosServicio);
 router.get("/obtener-estados-viaje", checkAuth, obtenerEstadosViaje);
+
+router.get("/obtener-todos-viajes", checkAuth, buscarTodosLosViajes);
 
 router.post("/buscar", checkAuth, busqueda);
 
@@ -93,6 +102,18 @@ router.post("/asignar-equipo/:id", checkAuth, asignarEquipo);
 router.post("/aprobar/:id", checkAuth, aprobarEquipo);
 
 router.post("/editar-viaje/:id", checkAuth, editarViaje);
+
+router.post("/eliminar-viaje/:id", checkAuth, eliminarViaje);
+
+router.post("/eliminar-servicio/:id", checkAuth, eliminarServicio);
+
+router.post("/terminar-viaje/:id", checkAuth, terminarViaje);
+
+router.post(
+  "/editar-observacion/:id",
+  checkAuth,
+  actualizarObservacionesServicio
+);
 
 router.post("/estado-servicio", checkAuth, nuevoEstadoServicio);
 router.post("/estado-viajes", checkAuth, nuevoEstadoViaje);
