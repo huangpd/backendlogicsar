@@ -740,9 +740,9 @@ const notificarViaje = async (req, res) => {
     }
   }
   if (usuarios.length == 0) {
-    await notificarViajes(usuarios, servicio, informacionEnviar);
-  } else {
     await notificarViajeSoloLogicsar(servicio, informacionEnviar);
+  } else {
+    await notificarViajes(usuarios, servicio, informacionEnviar);
   }
   servicio.notificar = "Notificado";
   await servicio.save();
