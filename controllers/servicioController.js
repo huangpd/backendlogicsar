@@ -368,10 +368,10 @@ const nuevoTransito = async (req, res) => {
   actualizacion.icon = "PlusCircleIcon";
   actualizacion.description = Date.now();
   actualizacion.color = "text-green-500";
-  actualizacion.title = `Servicio Transito Nro ${servicioalmacenado.numeroPedido} ingresado`;
 
   try {
     const servicioalmacenado = await servicio.save();
+    actualizacion.title = `Servicio Transito Nro ${servicioalmacenado.numeroPedido} ingresado`;
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||
