@@ -282,6 +282,74 @@ const editarProveedor = async (req, res) => {
   }
 };
 
+const editarChofer = async (req, res) => {
+  const { id } = req.params;
+
+  const chofer = await Choferes.findById(id);
+
+  if (!chofer) {
+    const error = new Error("No encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  chofer.nombre = req.body.nombre || chofer.nombre;
+  chofer.apellido = req.body.apellido || chofer.apellido;
+  chofer.dni = req.body.dni || chofer.dni;
+  chofer.email = req.body.email || chofer.email;
+  chofer.telefono = req.body.telefono || chofer.telefono;
+
+  try {
+    const choferAlmacenado = await chofer.save();
+    res.json(choferAlmacenado);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const editarCamion = async (req, res) => {
+  const { id } = req.params;
+
+  const camion = await Camiones.findById(id);
+
+  if (!camion) {
+    const error = new Error("No encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  camion.modelo = req.body.modelo || camion.modelo;
+  camion.patente = req.body.patente || camion.patente;
+  camion.year = req.body.year || camion.year;
+
+  try {
+    const camionAlmacenado = await camion.save();
+    res.json(camionAlmacenado);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const editarSemi = async (req, res) => {
+  const { id } = req.params;
+
+  const semi = await Semis.findById(id);
+
+  if (!semi) {
+    const error = new Error("No encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  semi.modelo = req.body.modelo || semi.modelo;
+  semi.patente = req.body.patente || semi.patente;
+  semi.year = req.body.year || semi.year;
+
+  try {
+    const semiAlmacenado = await semi.save();
+    res.json(semiAlmacenado);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export {
   editarProveedor,
   obtenerProveedor,
@@ -299,4 +367,7 @@ export {
   obtenerSemis,
   nuevoEquipo,
   obtenerEquipos,
+  editarChofer,
+  editarCamion,
+  editarSemi,
 };

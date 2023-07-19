@@ -990,7 +990,12 @@ const asignarEquipo = async (req, res) => {
 
   const chofer = await Choferes.findById(idChofer);
   const camion = await Camiones.findById(idCamion);
-  const semi = await Semis.findById(idSemi);
+
+  if (idSemi !== "") {
+    const semi = await Semis.findById(idSemi);
+    viaje.semi = idSemi;
+    viaje.patenteSemi = semi.patente;
+  }
 
   const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 4 });
 
@@ -998,8 +1003,6 @@ const asignarEquipo = async (req, res) => {
   viaje.nombreChofer = chofer.nombre + " " + chofer.apellido;
   viaje.camion = idCamion;
   viaje.patenteCamion = camion.patente;
-  viaje.semi = idSemi;
-  viaje.patenteSemi = semi.patente;
 
   viaje.estado = estadoViaje.estado;
 
@@ -1597,6 +1600,64 @@ const buscarTodosLosViajes = async (req, res) => {
   }
 };
 
+// const notificarAlChofer = async (req, res) => {
+//   const { id } = req.params;
+
+//   const viaje = await Viajes.findById(id);
+//   const actualizacion = new Actualizaciones();
+//   let origenFantasia = "";
+//   let destinoFantasia = "";
+//   let origen = [];
+//   let destino = [];
+
+//   const chofer = await Choferes.findById(viaje.chofer);
+
+//   if (viaje.domicilioOrigenCliente !== "") {
+//     origen = await Domicilios.findById(viaje.domicilioOrigenCliente);
+//     origenFantasia = origen.fantasia;
+//   }
+//   if (viaje.domicilioOrigenTerminal !== "") {
+//     origen = await Terminales.findById(viaje.domicilioOrigenTerminal);
+//     origenFantasia = origen.nombre;
+//   }
+//   if (viaje.domicilioDestinoCliente !== "") {
+//     destino = await Domicilios.findById(viaje.domicilioOrigenCliente);
+//     destinoFantasia = destino.fantasia;
+//   }
+//   if (viaje.domicilioDestinoTerminal !== "") {
+//     destino = await Terminales.findById(viaje.domicilioOrigenTerminal);
+//     destinoFantasia = destino.nombre;
+//   }
+
+//   actualizacion.icon = "EnvelopeIcon";
+//   actualizacion.description = Date.now();
+//   actualizacion.color = "text-blue-500";
+//   actualizacion.title = `Viajes Servicio ${viaje.numeroDeViaje} notificado al chofer`;
+
+//   const informacionEnviar = {
+//     nombre: chofer.nombre + chofer.apellido,
+//     dni: chofer.dni,
+//     patenteCamion: viaje.patenteCamion,
+//     patenteSemi: viaje.patenteSemi,
+//     fechaCarga: viaje.fechaOrigen,
+//     horaCarga: viaje.horaOrigen,
+//     tipoCarga: viaje.tipoCarga,
+//     cantidad: viaje.cantidad,
+//     peso: viaje.peso,
+//     contenedor: viaje.numeroContenedor,
+//     origenFantasia: origenFantasia,
+//     origen: origen.direccion,
+//     destinoFantasia: destinoFantasia,
+//     destino: destino.direccion,
+//     observaciones: viaje.observaciones,
+//   };
+
+//   await notificarViajeSoloLogicsar(informacionEnviar);
+
+//   await actualizacion.save();
+//   res.json({ msg: "Viaje Notificado al chofer Con Exito" });
+// };
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -1639,4 +1700,5 @@ export {
   terminarViaje,
   buscarTodosLosViajes,
   filtrarViajes,
+  // notificarAlChofer,
 };

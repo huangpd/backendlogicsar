@@ -44,6 +44,7 @@ import {
   terminarViaje,
   buscarTodosLosViajes,
   filtrarViajes,
+  // notificarAlChofer,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -96,6 +97,8 @@ router.post(
 router.post("/cambiar-estado-viaje/:id", checkAuth, actualizarEstadoViaje);
 
 router.post("/notificar-viajes/:id", checkAuth, notificarViaje);
+// router.post("/notificar-chofer/:id", checkAuth, notificarAlChofer);
+
 router.post("/notificar-aceptacion/:id", checkAuth, notificarAceptacion);
 
 router.post("/asignar-equipo/:id", checkAuth, asignarEquipo);

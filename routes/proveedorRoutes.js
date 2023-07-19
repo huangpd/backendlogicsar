@@ -19,6 +19,9 @@ import {
   obtenerSemis,
   nuevoEquipo,
   obtenerEquipos,
+  editarChofer,
+  editarCamion,
+  editarSemi,
 } from "../controllers/proveedoresController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -44,6 +47,10 @@ router.post("/nuevo-semi/:id", checkAuth, nuevoSemi);
 router.post("/nuevo-equipo/:id", checkAuth, nuevoEquipo);
 
 router.post("/comprobar", checkAuth, comprobarProveedor);
+
+router.put("/editar-chofer/:id", checkAuth, editarChofer);
+router.put("/editar-camion/:id", checkAuth, editarCamion);
+router.put("/editar-semi/:id", checkAuth, editarSemi);
 
 //TODO: Agregar facturas a los clientes
 
