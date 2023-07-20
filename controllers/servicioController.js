@@ -22,6 +22,7 @@ import EstadosViajes from "../models/EstadosViajes.js";
 import Devoluciones from "../models/DevolucionContenedores.js";
 import Usuario from "../models/Usuario.js";
 import Actualizaciones from "../models/UltimasActualizaciones.js";
+import Documentacion from "../models/Documentacion.js";
 
 const nuevoServicioImportacion = async (req, res) => {
   const { idCliente } = req.body;
@@ -83,6 +84,16 @@ const nuevoServicioImportacion = async (req, res) => {
 
       const viajeAlmacenado = await nuevoViaje.save();
       servicioalmacenado.viajesSueltos = viajeAlmacenado._id;
+      await cargarDocumentacionARecibir(
+        cliente.nombre,
+        cliente._id,
+        servicioalmacenado.numeroPedido,
+        servicioalmacenado._id,
+        `${servicioalmacenado.numeroPedido}/1`,
+        viajeAlmacenado._id,
+        "Mercaderia sin Contenedor",
+        "Remito"
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -118,6 +129,26 @@ const nuevoServicioImportacion = async (req, res) => {
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Remito"
+            );
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Devolucion Vacio"
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -155,6 +186,25 @@ const nuevoServicioImportacion = async (req, res) => {
           observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/$1`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor
+        );
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/${index + 1}`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor,
+          "Devolucion Vacio"
+        );
 
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
@@ -244,6 +294,16 @@ const nuevoServicioExportacion = async (req, res) => {
 
       const viajeAlmacenado = await nuevoViaje.save();
       servicioalmacenado.viajesSueltos = viajeAlmacenado._id;
+      await cargarDocumentacionARecibir(
+        cliente.nombre,
+        cliente._id,
+        servicioalmacenado.numeroPedido,
+        servicioalmacenado._id,
+        `${servicioalmacenado.numeroPedido}/1`,
+        viajeAlmacenado._id,
+        "Mercaderia sin Contenedor",
+        "Remito"
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -278,6 +338,26 @@ const nuevoServicioExportacion = async (req, res) => {
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Remito"
+            );
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Devolucion Vacio"
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -315,6 +395,25 @@ const nuevoServicioExportacion = async (req, res) => {
           observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/$1`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor
+        );
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/${index + 1}`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor,
+          "Devolucion Vacio"
+        );
 
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
@@ -403,6 +502,16 @@ const nuevoTransito = async (req, res) => {
 
       const viajeAlmacenado = await nuevoViaje.save();
       servicioalmacenado.viajesSueltos = viajeAlmacenado._id;
+      await cargarDocumentacionARecibir(
+        cliente.nombre,
+        cliente._id,
+        servicioalmacenado.numeroPedido,
+        servicioalmacenado._id,
+        `${servicioalmacenado.numeroPedido}/1`,
+        viajeAlmacenado._id,
+        "Mercaderia sin Contenedor",
+        "Remito"
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -438,6 +547,26 @@ const nuevoTransito = async (req, res) => {
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Remito"
+            );
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Devolucion Vacio"
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -474,6 +603,25 @@ const nuevoTransito = async (req, res) => {
           observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/$1`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor
+        );
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/${index + 1}`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor,
+          "Devolucion Vacio"
+        );
 
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
@@ -561,6 +709,16 @@ const nuevoServicioNacional = async (req, res) => {
 
       const viajeAlmacenado = await nuevoViaje.save();
       servicioalmacenado.viajesSueltos = viajeAlmacenado._id;
+      await cargarDocumentacionARecibir(
+        cliente.nombre,
+        cliente._id,
+        servicioalmacenado.numeroPedido,
+        servicioalmacenado._id,
+        `${servicioalmacenado.numeroPedido}/1`,
+        viajeAlmacenado._id,
+        "Mercaderia sin Contenedor",
+        "Remito"
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -596,6 +754,26 @@ const nuevoServicioNacional = async (req, res) => {
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Remito"
+            );
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Devolucion Vacio"
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -633,7 +811,25 @@ const nuevoServicioNacional = async (req, res) => {
           observaciones: servicioalmacenado.observaciones,
         });
         const viajeAlmacenado = await nuevoViaje.save();
-
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/$1`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor
+        );
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/${index + 1}`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor,
+          "Devolucion Vacio"
+        );
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
     }
@@ -988,6 +1184,8 @@ const asignarEquipo = async (req, res) => {
   const viaje = await Viajes.findById(id);
   const actualizacion = new Actualizaciones();
 
+  const documentacion = await Documentacion.find({ viaje: id });
+
   const chofer = await Choferes.findById(idChofer);
   const camion = await Camiones.findById(idCamion);
 
@@ -1012,9 +1210,15 @@ const asignarEquipo = async (req, res) => {
   actualizacion.title = `Se asigno equipo al viaje Nro ${viaje.numeroDeViaje}`;
 
   try {
-    const { data } = await viaje.save();
+    const viajeAlmacenado = await viaje.save();
+    documentacion[0].nombreChofer = viajeAlmacenado.nombreChofer;
+    documentacion[1].nombreChofer = viajeAlmacenado.nombreChofer;
+
+    await documentacion[0].save();
+    await documentacion[1].save();
+
     await actualizacion.save();
-    res.json(data);
+    res.json(viajeAlmacenado);
   } catch (error) {
     console.log(error);
   }
@@ -1352,6 +1556,8 @@ const editarViaje = async (req, res) => {
   const { tipoServicio } = req.body;
 
   const viaje = await Viajes.findById(id);
+  const documentacion = await Documentacion.find({ viaje: id });
+  console.log(documentacion);
   const actualizacion = new Actualizaciones();
   if (!viaje) {
     const error = new Error("Viaje no encontrado");
@@ -1359,6 +1565,7 @@ const editarViaje = async (req, res) => {
   }
 
   viaje.numeroContenedor = req.body.numeroContenedor || viaje.numeroContenedor;
+
   viaje.fechaOrigen = req.body.fechaOrigen || viaje.fechaOrigen;
   viaje.horaOrigen = req.body.horaOrigen || viaje.horaOrigen;
   viaje.direccionRetorno = req.body.direccionRetorno || viaje.direccionRetorno;
@@ -1426,6 +1633,12 @@ const editarViaje = async (req, res) => {
     actualizacion.title = `Se edito el viaje Nro ${viaje.numeroDeViaje}`;
     await actualizacion.save();
     const viajeAlmacenado = await viaje.save();
+    documentacion[0].numeroContenedor = viajeAlmacenado.numeroContenedor;
+    documentacion[1].numeroContenedor = viajeAlmacenado.numeroContenedor;
+
+    await documentacion[0].save();
+    await documentacion[1].save();
+
     res.json(viajeAlmacenado);
   } catch (error) {
     console.log(error);
@@ -1600,63 +1813,128 @@ const buscarTodosLosViajes = async (req, res) => {
   }
 };
 
-// const notificarAlChofer = async (req, res) => {
-//   const { id } = req.params;
+const notificarAlChofer = async (req, res) => {
+  const { id } = req.params;
 
-//   const viaje = await Viajes.findById(id);
-//   const actualizacion = new Actualizaciones();
-//   let origenFantasia = "";
-//   let destinoFantasia = "";
-//   let origen = [];
-//   let destino = [];
+  const viaje = await Viajes.findById(id);
+  const actualizacion = new Actualizaciones();
+  let origenFantasia = "";
+  let destinoFantasia = "";
+  let origen = [];
+  let destino = [];
 
-//   const chofer = await Choferes.findById(viaje.chofer);
+  const chofer = await Choferes.findById(viaje.chofer);
 
-//   if (viaje.domicilioOrigenCliente !== "") {
-//     origen = await Domicilios.findById(viaje.domicilioOrigenCliente);
-//     origenFantasia = origen.fantasia;
-//   }
-//   if (viaje.domicilioOrigenTerminal !== "") {
-//     origen = await Terminales.findById(viaje.domicilioOrigenTerminal);
-//     origenFantasia = origen.nombre;
-//   }
-//   if (viaje.domicilioDestinoCliente !== "") {
-//     destino = await Domicilios.findById(viaje.domicilioOrigenCliente);
-//     destinoFantasia = destino.fantasia;
-//   }
-//   if (viaje.domicilioDestinoTerminal !== "") {
-//     destino = await Terminales.findById(viaje.domicilioOrigenTerminal);
-//     destinoFantasia = destino.nombre;
-//   }
+  if (viaje.domicilioOrigenCliente.length !== 0) {
+    console.log(viaje.domicilioOrigenCliente);
 
-//   actualizacion.icon = "EnvelopeIcon";
-//   actualizacion.description = Date.now();
-//   actualizacion.color = "text-blue-500";
-//   actualizacion.title = `Viajes Servicio ${viaje.numeroDeViaje} notificado al chofer`;
+    origen = await Domicilios.findById(viaje.domicilioOrigenCliente);
+    origenFantasia = origen.fantasia;
+  }
+  if (viaje.domicilioOrigenTerminal.length !== 0) {
+    origen = await Terminales.findById(viaje.domicilioOrigenTerminal);
+    origenFantasia = origen.nombre;
+  }
+  if (viaje.domicilioDestinoCliente.length !== 0) {
+    console.log(viaje.domicilioDestinoCliente);
+    destino = await Domicilios.findById(viaje.domicilioOrigenCliente);
+    destinoFantasia = destino.fantasia;
+  }
+  if (viaje.domicilioDestinoTerminal.length !== 0) {
+    destino = await Terminales.findById(viaje.domicilioOrigenTerminal);
+    destinoFantasia = destino.nombre;
+  }
 
-//   const informacionEnviar = {
-//     nombre: chofer.nombre + chofer.apellido,
-//     dni: chofer.dni,
-//     patenteCamion: viaje.patenteCamion,
-//     patenteSemi: viaje.patenteSemi,
-//     fechaCarga: viaje.fechaOrigen,
-//     horaCarga: viaje.horaOrigen,
-//     tipoCarga: viaje.tipoCarga,
-//     cantidad: viaje.cantidad,
-//     peso: viaje.peso,
-//     contenedor: viaje.numeroContenedor,
-//     origenFantasia: origenFantasia,
-//     origen: origen.direccion,
-//     destinoFantasia: destinoFantasia,
-//     destino: destino.direccion,
-//     observaciones: viaje.observaciones,
-//   };
+  actualizacion.icon = "EnvelopeIcon";
+  actualizacion.description = Date.now();
+  actualizacion.color = "text-blue-500";
+  actualizacion.title = `Viajes Servicio ${viaje.numeroDeViaje} notificado al chofer`;
 
-//   await notificarViajeSoloLogicsar(informacionEnviar);
+  const informacionEnviar = {
+    nombre: chofer.nombre + chofer.apellido,
+    dni: chofer.dni,
+    patenteCamion: viaje.patenteCamion,
+    patenteSemi: viaje.patenteSemi,
+    fechaCarga: viaje.fechaOrigen,
+    horaCarga: viaje.horaOrigen,
+    tipoCarga: viaje.tipoCarga,
+    cantidad: viaje.cantidad,
+    peso: viaje.peso,
+    contenedor: viaje.numeroContenedor,
+    origenFantasia: origenFantasia,
+    origen: origen.direccion,
+    destinoFantasia: destinoFantasia,
+    destino: destino.direccion,
+    observaciones: viaje.observaciones,
+  };
 
-//   await actualizacion.save();
-//   res.json({ msg: "Viaje Notificado al chofer Con Exito" });
-// };
+  await notificarViajeSoloLogicsar(informacionEnviar);
+
+  await actualizacion.save();
+  res.json({ msg: "Viaje Notificado al chofer Con Exito" });
+};
+
+const cargarDocumentacionARecibir = async (
+  nombreCliente,
+  idCliente,
+  nroServicio,
+  idServicio,
+  nroViaje,
+  idviaje,
+  nroContenedor,
+  tipo
+) => {
+  const documentacion = new Documentacion();
+
+  documentacion.numeroViaje = nroViaje;
+  documentacion.numeroServicio = nroServicio;
+  documentacion.tipoDocumentacion = tipo;
+  documentacion.estado = "Esperando Numero";
+  documentacion.cliente = idCliente;
+  documentacion.nombreCliente = nombreCliente;
+  documentacion.servicio = idServicio;
+  documentacion.viaje = idviaje;
+  documentacion.numeroContenedor = nroContenedor;
+
+  await documentacion.save();
+};
+
+const obtenerDocumentacion = async (req, res) => {
+  const { id } = req.params;
+
+  const docu = await Documentacion.find({ servicio: id });
+
+  res.json(docu);
+};
+
+const editarDocumento = async (req, res) => {
+  const { id } = req.params;
+
+  const documento = await Documentacion.findById(id);
+  const actualizacion = new Actualizaciones();
+
+  if (!documento) {
+    const error = new Error("Documento no encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  documento.numeroDocumentacion =
+    req.body.numeroDocumentacion || documento.numeroDocumentacion;
+  documento.linkDocumento = req.body.linkDocumento || documento.linkDocumento;
+  documento.estado = req.body.estado || documento.estado;
+
+  try {
+    actualizacion.icon = "PaperClipIcon";
+    actualizacion.description = Date.now();
+    actualizacion.color = "text-green-300";
+    actualizacion.title = `Se edito el documento del viaje Nro ${documento.numeroViaje}`;
+    await actualizacion.save();
+    const documentoAlmacenado = await documento.save();
+    res.json(documentoAlmacenado);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export {
   nuevoServicioImportacion,
@@ -1700,5 +1978,7 @@ export {
   terminarViaje,
   buscarTodosLosViajes,
   filtrarViajes,
-  // notificarAlChofer,
+  notificarAlChofer,
+  obtenerDocumentacion,
+  editarDocumento,
 };

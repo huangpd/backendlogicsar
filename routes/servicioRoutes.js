@@ -44,7 +44,9 @@ import {
   terminarViaje,
   buscarTodosLosViajes,
   filtrarViajes,
-  // notificarAlChofer,
+  notificarAlChofer,
+  obtenerDocumentacion,
+  editarDocumento,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -57,6 +59,7 @@ router.get("/todos-servicios", checkAuth, obtenerTodosLosServicios);
 router.get("/obtener-viajes/:id", checkAuth, obtenerViajesServicio);
 
 router.get("/obtener-viaje/:id", checkAuth, obtenerViaje);
+router.get("/obtener-documentacion/:id", checkAuth, obtenerDocumentacion);
 
 router.get("/obtener-viajes-sin-notificar", checkAuth, obtenerSinNotificar);
 
@@ -97,7 +100,7 @@ router.post(
 router.post("/cambiar-estado-viaje/:id", checkAuth, actualizarEstadoViaje);
 
 router.post("/notificar-viajes/:id", checkAuth, notificarViaje);
-// router.post("/notificar-chofer/:id", checkAuth, notificarAlChofer);
+router.post("/notificar-chofer/:id", checkAuth, notificarAlChofer);
 
 router.post("/notificar-aceptacion/:id", checkAuth, notificarAceptacion);
 
@@ -105,6 +108,8 @@ router.post("/asignar-equipo/:id", checkAuth, asignarEquipo);
 router.post("/aprobar/:id", checkAuth, aprobarEquipo);
 
 router.post("/editar-viaje/:id", checkAuth, editarViaje);
+
+router.post("/editar-documento/:id", checkAuth, editarDocumento);
 
 router.post("/eliminar-viaje/:id", checkAuth, eliminarViaje);
 

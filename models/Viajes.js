@@ -84,6 +84,14 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    remito: {
+      type: String,
+      trim: true,
+    },
+    estado: {
+      type: String,
+      trim: true,
+    },
     fechaAlta: {
       type: Date,
       default: Date.now(),
@@ -96,6 +104,12 @@ const viajesSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Clientes",
+      },
+    ],
+    documentacion: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Documentacion",
       },
     ],
     nombreCliente: {
