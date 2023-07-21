@@ -184,7 +184,7 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
         from: '"CarryOn" <carryon.arg@gmail.com>',
         to: email,
         cc: "carryon.arg@gmail.com",
-        subject: `Pedido de Transporte - ${moment(fechaCarga).format(
+        subject: `Datos de camiones asignados - ${moment(fechaCarga).format(
           "dddd DD/MM"
         )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
         text: "Datos del transporte",
