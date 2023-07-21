@@ -81,6 +81,7 @@ const nuevoServicioImportacion = async (req, res) => {
         pesoCarga: servicioalmacenado.peso,
         estadoServicio: servicio.estado,
         notificado: "Sin Notificar",
+        referenciaCliente: servicio.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -127,6 +128,7 @@ const nuevoServicioImportacion = async (req, res) => {
               estadoServicio: servicio.estado,
               notificado: "Sin Notificar",
               observaciones: servicioalmacenado.observaciones,
+              referenciaCliente: servicio.numeroCliente,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -185,6 +187,7 @@ const nuevoServicioImportacion = async (req, res) => {
           estadoServicio: servicio.estado,
           notificado: "Sin Notificar",
           observaciones: servicioalmacenado.observaciones,
+          referenciaCliente: servicio.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -292,6 +295,7 @@ const nuevoServicioExportacion = async (req, res) => {
         estadoServicio: servicio.estado,
         notificado: "Sin Notificar",
         observaciones: servicioalmacenado.observaciones,
+        referenciaCliente: servicio.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -337,6 +341,7 @@ const nuevoServicioExportacion = async (req, res) => {
               pesoCarga: servicioalmacenado.peso,
               estadoServicio: servicio.estado,
               notificado: "Sin Notificar",
+              referenciaCliente: servicio.numeroCliente,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -395,6 +400,7 @@ const nuevoServicioExportacion = async (req, res) => {
           estadoServicio: servicio.estado,
           notificado: "Sin Notificar",
           observaciones: servicioalmacenado.observaciones,
+          referenciaCliente: servicio.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -501,6 +507,7 @@ const nuevoTransito = async (req, res) => {
         estadoServicio: servicio.estado,
         notificado: "Sin Notificar",
         observaciones: servicioalmacenado.observaciones,
+        referenciaCliente: servicio.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -547,6 +554,7 @@ const nuevoTransito = async (req, res) => {
               estadoServicio: servicio.estado,
               notificado: "Sin Notificar",
               observaciones: servicioalmacenado.observaciones,
+              referenciaCliente: servicio.numeroCliente,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -604,6 +612,7 @@ const nuevoTransito = async (req, res) => {
           pesoCarga: servicioalmacenado.peso,
           estadoServicio: servicio.estado,
           observaciones: servicioalmacenado.observaciones,
+          referenciaCliente: servicio.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -709,6 +718,7 @@ const nuevoServicioNacional = async (req, res) => {
         estadoServicio: servicio.estado,
         notificado: "Sin Notificar",
         observaciones: servicioalmacenado.observaciones,
+        referenciaCliente: servicio.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -755,6 +765,7 @@ const nuevoServicioNacional = async (req, res) => {
               estadoServicio: servicio.estado,
               notificado: "Sin Notificar",
               observaciones: servicioalmacenado.observaciones,
+              referenciaCliente: servicio.numeroCliente,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -813,6 +824,7 @@ const nuevoServicioNacional = async (req, res) => {
           estadoServicio: servicio.estado,
           notificado: "Sin Notificar",
           observaciones: servicioalmacenado.observaciones,
+          referenciaCliente: servicio.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(

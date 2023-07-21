@@ -219,6 +219,10 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    referenciaCliente: {
+      type: String,
+      trim: true,
+    },
     diasDemora: {
       type: String,
       trim: true,

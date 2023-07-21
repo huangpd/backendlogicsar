@@ -214,7 +214,7 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
                 <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.dni}</td>
                 <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.patenteCamion} / ${viaje.patenteSemi}</td>
                 <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.telefono}</td>
-                <td style="border-bottom: 1px solid #ccc;  padding: 8px;">aaa2233</td>
+                <td style="border-bottom: 1px solid #ccc;  padding: 8px;">${viaje.referenciaCliente}</td>
                 <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.numeroContenedor}</td>
               </tr>      
             `
@@ -274,7 +274,7 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
               <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.dni}</td>
               <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.patenteCamion} / ${viaje.patenteSemi}</td>
               <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.telefono}</td>
-              <td style="border-bottom: 1px solid #ccc;  padding: 8px;">aaa2233</td>
+              <td style="border-bottom: 1px solid #ccc;  padding: 8px;">${viaje.referenciaCliente}</td>
               <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.numeroContenedor}</td>
             </tr>      
           `
@@ -607,7 +607,7 @@ export const notificarViajeSoloLogicsar = async (servicio, viajes) => {
               <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.dni}</td>
               <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.patenteCamion} / ${viaje.patenteSemi}</td>
               <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.telefono}</td>
-              <td style="border-bottom: 1px solid #ccc;  padding: 8px;">aaa2233</td>
+              <td style="border-bottom: 1px solid #ccc;  padding: 8px;">${viaje.referenciaCliente}</td>
               <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.numeroContenedor}</td>
             </tr>      
           `
