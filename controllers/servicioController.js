@@ -57,6 +57,7 @@ const nuevoServicioImportacion = async (req, res) => {
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||
+      servicioalmacenado.tipoCarga === "bultos" ||
       servicioalmacenado.tipoCarga === "pallets"
     ) {
       const nuevoViaje = new Viajes({
@@ -266,6 +267,7 @@ const nuevoServicioExportacion = async (req, res) => {
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||
+      servicioalmacenado.tipoCarga === "bultos" ||
       servicioalmacenado.tipoCarga === "pallets"
     ) {
       const nuevoViaje = new Viajes({
@@ -474,6 +476,7 @@ const nuevoTransito = async (req, res) => {
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||
+      servicioalmacenado.tipoCarga === "bultos" ||
       servicioalmacenado.tipoCarga === "pallets"
     ) {
       const nuevoViaje = new Viajes({
@@ -681,6 +684,7 @@ const nuevoServicioNacional = async (req, res) => {
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||
+      servicioalmacenado.tipoCarga === "bultos" ||
       servicioalmacenado.tipoCarga === "pallets"
     ) {
       const nuevoViaje = new Viajes({
@@ -1212,10 +1216,13 @@ const asignarEquipo = async (req, res) => {
   try {
     const viajeAlmacenado = await viaje.save();
     documentacion[0].nombreChofer = viajeAlmacenado.nombreChofer;
-    documentacion[1].nombreChofer = viajeAlmacenado.nombreChofer;
+
+    if (documentacion.length > 1) {
+      documentacion[1].nombreChofer = viajeAlmacenado.nombreChofer;
+      await documentacion[1].save();
+    }
 
     await documentacion[0].save();
-    await documentacion[1].save();
 
     await actualizacion.save();
     res.json(viajeAlmacenado);
@@ -1571,6 +1578,15 @@ const editarViaje = async (req, res) => {
   viaje.direccionRetorno = req.body.direccionRetorno || viaje.direccionRetorno;
   viaje.estado = req.body.estado || viaje.estado;
   viaje.observaciones = req.body.observaciones || viaje.observaciones;
+  viaje.pesoCarga = req.body.pesoCarga || viaje.pesoCarga;
+  viaje.volumenCarga = req.body.volumenCarga || viaje.volumenCarga;
+  viaje.cantidadCarga = req.body.cantidadCarga || viaje.cantidadCarga;
+  viaje.tipoCarga = req.body.tipoCarga || viaje.tipoCarga;
+
+  console.log(req.body.pesoCarga);
+  console.log(req.body.volumenCarga);
+  console.log(req.body.cantidadCarga);
+  console.log(req.body.tipoCarga);
 
   if (tipoServicio == "importacion") {
     const origen = await Terminales.findById(req.body.domicilioOrigen);
@@ -1634,10 +1650,13 @@ const editarViaje = async (req, res) => {
     await actualizacion.save();
     const viajeAlmacenado = await viaje.save();
     documentacion[0].numeroContenedor = viajeAlmacenado.numeroContenedor;
-    documentacion[1].numeroContenedor = viajeAlmacenado.numeroContenedor;
+
+    if (documentacion.length > 1) {
+      documentacion[1].numeroContenedor = viajeAlmacenado.numeroContenedor;
+      await documentacion[1].save();
+    }
 
     await documentacion[0].save();
-    await documentacion[1].save();
 
     res.json(viajeAlmacenado);
   } catch (error) {
