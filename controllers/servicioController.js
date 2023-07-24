@@ -23,6 +23,7 @@ import Devoluciones from "../models/DevolucionContenedores.js";
 import Usuario from "../models/Usuario.js";
 import Actualizaciones from "../models/UltimasActualizaciones.js";
 import Documentacion from "../models/Documentacion.js";
+import ConceptosAFActurar from "../models/ConceptosAFActurar.js";
 
 const nuevoServicioImportacion = async (req, res) => {
   const { idCliente } = req.body;
@@ -69,6 +70,8 @@ const nuevoServicioImportacion = async (req, res) => {
         nombreCliente: cliente.nombre,
         domicilioOrigenTerminal: origenCarga,
         nombreDomicilioOrigenTerminal: domicilio.direccion,
+        fantasiaOrigen: domicilio.nombre,
+        fantasiaDestino: destino.fantasia,
         domicilioDestinoCliente: destinoCarga,
         estado: estadoViaje.estado,
         tipoServicio: servicioalmacenado.tipoOperacion,
@@ -96,6 +99,33 @@ const nuevoServicioImportacion = async (req, res) => {
         "Mercaderia sin Contenedor",
         "Remito"
       );
+
+      const conceptos = {
+        descripcion0: `${servicioalmacenado.tipoCarga}`,
+        descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+          servicioalmacenado.tipoCarga
+        } - ${servicioalmacenado.peso} - desde ${
+          domicilio.nombre
+            ? `${domicilio.nombre} - (${domicilio.direccion} - ${domicilio.localidad})`
+            : `${domicilio.direccion}-${domicilio.localidad}`
+        } hasta ${
+          destino.fantasia
+            ? `${destino.fantasia} - (${destino.direccion}-${destino.localidad})`
+            : `${destino.direccion} - ${destino.localidad}-${destino.localidad}`
+        }`,
+        descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+        descripcion3: "",
+        descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+        descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+      };
+
+      await cargarConceptosAFacturar(
+        viajeAlmacenado.fechaOrigen,
+        cliente._id,
+        cliente.nombre,
+        conceptos,
+        servicioalmacenado._id
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -115,6 +145,8 @@ const nuevoServicioImportacion = async (req, res) => {
               nombreCliente: cliente.nombre,
               domicilioOrigenTerminal: origenCarga,
               nombreDomicilioOrigenTerminal: domicilio.direccion,
+              fantasiaOrigen: domicilio.nombre,
+              fantasiaDestino: destino.fantasia,
               domicilioDestinoCliente: destinoCarga,
               estado: estadoViaje.estado,
               tipoServicio: servicioalmacenado.tipoOperacion,
@@ -152,6 +184,31 @@ const nuevoServicioImportacion = async (req, res) => {
               numeroContenedor.numeroContenedor,
               "Devolucion Vacio"
             );
+            const conceptos = {
+              descripcion0: `${servicioalmacenado.tipoCarga}`,
+              descripcion1: `Por transporte de 1 ${
+                servicioalmacenado.tipoCarga
+              } - ${servicioalmacenado.peso} - desde ${
+                domicilio.nombre
+                  ? `${domicilio.nombre} - (${domicilio.direccion}-${domicilio.localidad})`
+                  : `${domicilio.direccion}-${domicilio.localidad}`
+              } hasta ${
+                destino.fantasia
+                  ? `${destino.fantasia} - (${destino.direccion})`
+                  : `${destino.direccion}`
+              }`,
+              descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+              descripcion3: "",
+              descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+              descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+            };
+            await cargarConceptosAFacturar(
+              viajeAlmacenado.fechaOrigen,
+              cliente._id,
+              cliente.nombre,
+              conceptos,
+              servicioalmacenado._id
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -176,6 +233,8 @@ const nuevoServicioImportacion = async (req, res) => {
           domicilioOrigenTerminal: origenCarga,
           nombreDomicilioOrigenTerminal: domicilio.direccion,
           domicilioDestinoCliente: destinoCarga,
+          fantasiaOrigen: domicilio.nombre,
+          fantasiaDestino: destino.fantasia,
           nombreDomicilioDestinoCliente: destino.direccion,
           servicio: servicioalmacenado._id,
           tipoServicio: servicioalmacenado.tipoOperacion,
@@ -195,7 +254,7 @@ const nuevoServicioImportacion = async (req, res) => {
           cliente._id,
           servicioalmacenado.numeroPedido,
           servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/$1`,
+          `${servicioalmacenado.numeroPedido}/1`,
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor
         );
@@ -204,10 +263,37 @@ const nuevoServicioImportacion = async (req, res) => {
           cliente._id,
           servicioalmacenado.numeroPedido,
           servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/${index + 1}`,
+          `${servicioalmacenado.numeroPedido}/1`,
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor,
           "Devolucion Vacio"
+        );
+
+        const conceptos = {
+          descripcion0: `${servicioalmacenado.tipoCarga}`,
+          descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+            servicioalmacenado.tipoCarga
+          } - ${servicioalmacenado.peso} - desde ${
+            domicilio.nombre
+              ? `${domicilio.nombre} - (${domicilio.direccion})`
+              : `${domicilio.direccion}- ${domicilio.localidad}`
+          } hasta ${
+            destino.fantasia
+              ? `${destino.fantasia} - (${destino.direccion} - ${destino.localidad})`
+              : `${destino.direccion} - ${destino.localidad}`
+          }`,
+          descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+          descripcion3: "",
+          descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+          descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+        };
+        await cargarConceptosAFacturar(
+          viajeAlmacenado.fechaOrigen,
+          cliente._id,
+          cliente.nombre,
+          conceptos,
+
+          servicioalmacenado._id
         );
 
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
@@ -221,7 +307,7 @@ const nuevoServicioImportacion = async (req, res) => {
     const usuarios = await Usuario.find({
       cliente: servicioalmacenado.cliente,
     });
-    console.log(usuarios, servicioalmacenado);
+
     if (usuarios.length == 0) {
       await soloLogicsar(servicioalmacenado);
     } else {
@@ -241,7 +327,6 @@ const nuevoServicioExportacion = async (req, res) => {
   const { destinoCarga } = req.body;
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
-  console.log(req.body);
 
   const actualizacion = new Actualizaciones();
 
@@ -282,6 +367,8 @@ const nuevoServicioExportacion = async (req, res) => {
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
         nombreDomicilioOrigenCliente: domicilio.direccion,
+        origenFantasia: domicilio.fantasia,
+        destinoFantasia: destino.nombre,
         domicilioDestinoTerminal: destinoCarga,
         estado: estadoViaje.estado,
         tipoServicio: servicioalmacenado.tipoOperacion,
@@ -310,6 +397,33 @@ const nuevoServicioExportacion = async (req, res) => {
         "Mercaderia sin Contenedor",
         "Remito"
       );
+
+      const conceptos = {
+        descripcion0: `${servicioalmacenado.tipoCarga}`,
+        descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+          servicioalmacenado.tipoCarga
+        } - ${servicioalmacenado.peso} - desde ${
+          domicilio.fantasia
+            ? `${domicilio.fantasia} - (${domicilio.direccion})`
+            : `${domicilio.direccion}- ${domicilio.localidad}`
+        } hasta ${
+          destino.nombre
+            ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+            : `${destino.direccion} - ${destino.localidad}`
+        }`,
+        descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+        descripcion3: "",
+        descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+        descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+      };
+      await cargarConceptosAFacturar(
+        viajeAlmacenado.fechaOrigen,
+        cliente._id,
+        cliente.nombre,
+        conceptos,
+
+        servicioalmacenado._id
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -328,6 +442,8 @@ const nuevoServicioExportacion = async (req, res) => {
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
+              origenFantasia: domicilio.fantasia,
+              destinoFantasia: destino.nombre,
               nombreDomicilioOrigenCliente: domicilio.direccion,
               domicilioDestinoTerminal: destinoCarga,
               estado: estadoViaje.estado,
@@ -365,6 +481,32 @@ const nuevoServicioExportacion = async (req, res) => {
               numeroContenedor.numeroContenedor,
               "Devolucion Vacio"
             );
+            const conceptos = {
+              descripcion0: `${servicioalmacenado.tipoCarga}`,
+              descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+                servicioalmacenado.tipoCarga
+              } - ${servicioalmacenado.peso} - desde ${
+                domicilio.fantasia
+                  ? `${domicilio.fantasia} - (${domicilio.direccion})`
+                  : `${domicilio.direccion}- ${domicilio.localidad}`
+              } hasta ${
+                destino.nombre
+                  ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+                  : `${destino.direccion} - ${destino.localidad}`
+              }`,
+              descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+              descripcion3: "",
+              descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+              descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+            };
+            await cargarConceptosAFacturar(
+              viajeAlmacenado.fechaOrigen,
+              cliente._id,
+              cliente.nombre,
+              conceptos,
+
+              servicioalmacenado._id
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -387,6 +529,8 @@ const nuevoServicioExportacion = async (req, res) => {
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
+          origenFantasia: domicilio.fantasia,
+          destinoFantasia: destino.nombre,
           nombreDomicilioOrigenCliente: domicilio.direccion,
           domicilioDestinoTerminal: destinoCarga,
           nombreDomicilioDestinoTerminal: destino.direccion,
@@ -422,6 +566,32 @@ const nuevoServicioExportacion = async (req, res) => {
           numeroContenedores[0].numeroContenedor,
           "Devolucion Vacio"
         );
+        const conceptos = {
+          descripcion0: `${servicioalmacenado.tipoCarga}`,
+          descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+            servicioalmacenado.tipoCarga
+          } - ${servicioalmacenado.peso} - desde ${
+            domicilio.fantasia
+              ? `${domicilio.fantasia} - (${domicilio.direccion})`
+              : `${domicilio.direccion}- ${domicilio.localidad}`
+          } hasta ${
+            destino.nombre
+              ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+              : `${destino.direccion} - ${destino.localidad}`
+          }`,
+          descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+          descripcion3: "",
+          descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+          descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+        };
+        await cargarConceptosAFacturar(
+          viajeAlmacenado.fechaOrigen,
+          cliente._id,
+          cliente.nombre,
+          conceptos,
+
+          servicioalmacenado._id
+        );
 
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
@@ -434,7 +604,7 @@ const nuevoServicioExportacion = async (req, res) => {
     const usuarios = await Usuario.find({
       cliente: servicioalmacenado.cliente,
     });
-    console.log(usuarios, servicioalmacenado);
+
     if (usuarios.length == 0) {
       await soloLogicsar(servicioalmacenado);
     } else {
@@ -455,7 +625,6 @@ const nuevoTransito = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
-  console.log(req.body);
 
   const domicilio = await Terminales.findById(origenCarga);
   const destino = await Terminales.findById(destinoCarga);
@@ -494,6 +663,8 @@ const nuevoTransito = async (req, res) => {
         nombreCliente: cliente.nombre,
         domicilioOrigenTerminal: origenCarga,
         nombreDomicilioOrigenTerminal: domicilio.direccion,
+        fantasiaOrigen: domicilio.nombre,
+        fantasiaDestino: destino.nombre,
         domicilioDestinoTerminal: destinoCarga,
         estado: estadoViaje.estado,
         tipoServicio: servicioalmacenado.tipoOperacion,
@@ -522,6 +693,33 @@ const nuevoTransito = async (req, res) => {
         "Mercaderia sin Contenedor",
         "Remito"
       );
+
+      const conceptos = {
+        descripcion0: `${servicioalmacenado.tipoCarga}`,
+        descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+          servicioalmacenado.tipoCarga
+        } - ${servicioalmacenado.peso} - desde ${
+          domicilio.nombre
+            ? `${domicilio.nombre} - (${domicilio.direccion})`
+            : `${domicilio.direccion}- ${domicilio.localidad}`
+        } hasta ${
+          destino.nombre
+            ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+            : `${destino.direccion} - ${destino.localidad}`
+        }`,
+        descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+        descripcion3: "",
+        descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+        descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+      };
+      await cargarConceptosAFacturar(
+        viajeAlmacenado.fechaOrigen,
+        cliente._id,
+        cliente.nombre,
+        conceptos,
+
+        servicioalmacenado._id
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -540,6 +738,8 @@ const nuevoTransito = async (req, res) => {
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenTerminal: origenCarga,
+              fantasiaOrigen: domicilio.nombre,
+              fantasiaDestino: destino.nombre,
               nombreDomicilioOrigenTerminal: domicilio.direccion,
               domicilioDestinoTerminal: destinoCarga,
               estado: estadoViaje.estado,
@@ -578,6 +778,32 @@ const nuevoTransito = async (req, res) => {
               numeroContenedor.numeroContenedor,
               "Devolucion Vacio"
             );
+            const conceptos = {
+              descripcion0: `${servicioalmacenado.tipoCarga}`,
+              descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+                servicioalmacenado.tipoCarga
+              } - ${servicioalmacenado.peso} - desde ${
+                domicilio.nombre
+                  ? `${domicilio.nombre} - (${domicilio.direccion})`
+                  : `${domicilio.direccion}- ${domicilio.localidad}`
+              } hasta ${
+                destino.nombre
+                  ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+                  : `${destino.direccion} - ${destino.localidad}`
+              }`,
+              descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+              descripcion3: "",
+              descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+              descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+            };
+            await cargarConceptosAFacturar(
+              viajeAlmacenado.fechaOrigen,
+              cliente._id,
+              cliente.nombre,
+              conceptos,
+
+              servicioalmacenado._id
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -600,6 +826,8 @@ const nuevoTransito = async (req, res) => {
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenTerminal: origenCarga,
+          fantasiaOrigen: domicilio.nombre,
+          fantasiaDestino: destino.nombre,
           nombreDomicilioOrigenTerminal: domicilio.direccion,
           domicilioDestinoTerminal: destinoCarga,
           nombreDomicilioDestinoTerminal: destino.direccion,
@@ -634,6 +862,32 @@ const nuevoTransito = async (req, res) => {
           numeroContenedores[0].numeroContenedor,
           "Devolucion Vacio"
         );
+        const conceptos = {
+          descripcion0: `${servicioalmacenado.tipoCarga}`,
+          descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+            servicioalmacenado.tipoCarga
+          } - ${servicioalmacenado.peso} - desde ${
+            domicilio.nombre
+              ? `${domicilio.nombre} - (${domicilio.direccion})`
+              : `${domicilio.direccion}- ${domicilio.localidad}`
+          } hasta ${
+            destino.nombre
+              ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+              : `${destino.direccion} - ${destino.localidad}`
+          }`,
+          descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+          descripcion3: "",
+          descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+          descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+        };
+        await cargarConceptosAFacturar(
+          viajeAlmacenado.fechaOrigen,
+          cliente._id,
+          cliente.nombre,
+          conceptos,
+
+          servicioalmacenado._id
+        );
 
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
@@ -645,7 +899,7 @@ const nuevoTransito = async (req, res) => {
     const usuarios = await Usuario.find({
       cliente: servicioalmacenado.cliente,
     });
-    console.log(usuarios, servicioalmacenado);
+
     if (usuarios.length == 0) {
       await soloLogicsar(servicioalmacenado);
     } else {
@@ -666,7 +920,6 @@ const nuevoServicioNacional = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
-  console.log(req.body);
 
   const domicilio = await Domicilios.findById(origenCarga);
   const destino = await Domicilios.findById(destinoCarga);
@@ -704,6 +957,8 @@ const nuevoServicioNacional = async (req, res) => {
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
+        origenFantasia: domicilio.fantasia,
+        destinoFantasia: destino.fantasia,
         nombreDomicilioOrigenCliente: domicilio.direccion,
         domicilioDestinoCliente: destinoCarga,
         estado: estadoViaje.estado,
@@ -733,6 +988,32 @@ const nuevoServicioNacional = async (req, res) => {
         "Mercaderia sin Contenedor",
         "Remito"
       );
+      const conceptos = {
+        descripcion0: `${servicioalmacenado.tipoCarga}`,
+        descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+          servicioalmacenado.tipoCarga
+        } - ${servicioalmacenado.peso} - desde ${
+          domicilio.fantasia
+            ? `${domicilio.fantasia} - (${domicilio.direccion})`
+            : `${domicilio.direccion}- ${domicilio.localidad}`
+        } hasta ${
+          destino.fantasia
+            ? `${destino.fantasia} - (${destino.direccion} - ${destino.localidad})`
+            : `${destino.direccion} - ${destino.localidad}`
+        }`,
+        descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+        descripcion3: "",
+        descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+        descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+      };
+      await cargarConceptosAFacturar(
+        viajeAlmacenado.fechaOrigen,
+        cliente._id,
+        cliente.nombre,
+        conceptos,
+
+        servicioalmacenado._id
+      );
     }
     if (
       servicioalmacenado.tipoCarga === "Contenedor20" ||
@@ -752,6 +1033,8 @@ const nuevoServicioNacional = async (req, res) => {
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
               nombreDomicilioOrigenCliente: domicilio.direccion,
+              origenFantasia: domicilio.fantasia,
+              destinoFantasia: destino.fantasia,
               domicilioDestinoCliente: destinoCarga,
               estado: estadoViaje.estado,
               tipoServicio: servicioalmacenado.tipoOperacion,
@@ -789,6 +1072,33 @@ const nuevoServicioNacional = async (req, res) => {
               numeroContenedor.numeroContenedor,
               "Devolucion Vacio"
             );
+
+            const conceptos = {
+              descripcion0: `${servicioalmacenado.tipoCarga}`,
+              descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+                servicioalmacenado.tipoCarga
+              } - ${servicioalmacenado.peso} - desde ${
+                domicilio.fantasia
+                  ? `${domicilio.fantasia} - (${domicilio.direccion})`
+                  : `${domicilio.direccion}- ${domicilio.localidad}`
+              } hasta ${
+                destino.fantasia
+                  ? `${destino.fantasia} - (${destino.direccion} - ${destino.localidad})`
+                  : `${destino.direccion} - ${destino.localidad}`
+              }`,
+              descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+              descripcion3: "",
+              descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+              descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+            };
+            await cargarConceptosAFacturar(
+              viajeAlmacenado.fechaOrigen,
+              cliente._id,
+              cliente.nombre,
+              conceptos,
+
+              servicioalmacenado._id
+            );
             return viajeAlmacenado._id;
           }
         );
@@ -812,6 +1122,8 @@ const nuevoServicioNacional = async (req, res) => {
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
           nombreDomicilioOrigenCliente: domicilio.direccion,
+          origenFantasia: domicilio.fantasia,
+          destinoFantasia: destino.fantasia,
           domicilioDestinoCliente: destinoCarga,
           nombreDomicilioDestinoCliente: destino.direccion,
           servicio: servicioalmacenado._id,
@@ -846,6 +1158,32 @@ const nuevoServicioNacional = async (req, res) => {
           numeroContenedores[0].numeroContenedor,
           "Devolucion Vacio"
         );
+        const conceptos = {
+          descripcion0: `${servicioalmacenado.tipoCarga}`,
+          descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+            servicioalmacenado.tipoCarga
+          } - ${servicioalmacenado.peso} - desde ${
+            domicilio.fantasia
+              ? `${domicilio.fantasia} - (${domicilio.direccion})`
+              : `${domicilio.direccion}- ${domicilio.localidad}`
+          } hasta ${
+            destino.fantasia
+              ? `${destino.fantasia} - (${destino.direccion} - ${destino.localidad})`
+              : `${destino.direccion} - ${destino.localidad}`
+          }`,
+          descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+          descripcion3: "",
+          descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+          descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+        };
+        await cargarConceptosAFacturar(
+          viajeAlmacenado.fechaOrigen,
+          cliente._id,
+          cliente.nombre,
+          conceptos,
+
+          servicioalmacenado._id
+        );
         servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
       }
     }
@@ -856,7 +1194,7 @@ const nuevoServicioNacional = async (req, res) => {
     const usuarios = await Usuario.find({
       cliente: servicioalmacenado.cliente,
     });
-    console.log(usuarios, servicioalmacenado);
+
     if (usuarios.length == 0) {
       await soloLogicsar(servicioalmacenado);
     } else {
@@ -1199,11 +1537,16 @@ const asignarEquipo = async (req, res) => {
   const { idSemi } = req.body;
   const viaje = await Viajes.findById(id);
   const actualizacion = new Actualizaciones();
+  const servicio = await Servicio.findById(viaje.servicio);
 
   const documentacion = await Documentacion.find({ viaje: id });
 
   const chofer = await Choferes.findById(idChofer);
   const camion = await Camiones.findById(idCamion);
+
+  const viajesFiltrados = await Viajes.find({ servicio: viaje.servicio });
+
+  console.log(viajesFiltrados);
 
   if (idSemi !== "") {
     const semi = await Semis.findById(idSemi);
@@ -1516,7 +1859,6 @@ const obtenerEstadosViaje = async (req, res) => {
 };
 
 const filtrarViajes = async (req, res) => {
-  console.log("entro a filtrar viajes");
   const { cliente, fecha, estado } = req.body;
   let filtro = {};
 
@@ -1563,7 +1905,7 @@ const filtrarViajes = async (req, res) => {
 
   try {
     const viajesFiltrados = await Viajes.find(filtro);
-    console.log(viajesFiltrados);
+
     res.json(viajesFiltrados);
   } catch (error) {
     res.status(500).json({ error: "Error al filtrar los viajes" });
@@ -1576,7 +1918,7 @@ const editarViaje = async (req, res) => {
 
   const viaje = await Viajes.findById(id);
   const documentacion = await Documentacion.find({ viaje: id });
-  console.log(documentacion);
+
   const actualizacion = new Actualizaciones();
   if (!viaje) {
     const error = new Error("Viaje no encontrado");
@@ -1594,11 +1936,6 @@ const editarViaje = async (req, res) => {
   viaje.volumenCarga = req.body.volumenCarga || viaje.volumenCarga;
   viaje.cantidadCarga = req.body.cantidadCarga || viaje.cantidadCarga;
   viaje.tipoCarga = req.body.tipoCarga || viaje.tipoCarga;
-
-  console.log(req.body.pesoCarga);
-  console.log(req.body.volumenCarga);
-  console.log(req.body.cantidadCarga);
-  console.log(req.body.tipoCarga);
 
   if (tipoServicio == "importacion") {
     const origen = await Terminales.findById(req.body.domicilioOrigen);
@@ -1689,7 +2026,6 @@ const obtenerActualizaciones = async (req, res) => {
 };
 
 const busqueda = async (req, res) => {
-  console.log("quiero buscar");
   try {
     // Obtén el término de búsqueda del cuerpo de la solicitud (puedes ajustar esto según tu implementación)
     const { terminoBusqueda } = req.body;
@@ -1746,8 +2082,6 @@ const busqueda = async (req, res) => {
       proveedores: proveedores,
       viajes: viajes,
     });
-
-    console.log(servicios);
   } catch (error) {
     // Manejo de errores
     console.error(error);
@@ -1758,8 +2092,6 @@ const busqueda = async (req, res) => {
 const actualizarObservacionesServicio = async (req, res) => {
   const { id } = req.params;
   const { observaciones } = req.body;
-
-  console.log(observaciones);
 
   const servicio = await Servicio.findById(id);
 
@@ -1829,8 +2161,44 @@ const terminarViaje = async (req, res) => {
   viaje.observaciones = observaciones;
 
   await viaje.save();
+  await adicionalFacturar(
+    fechaTerminacion,
+    horaTerminacion,
+    viaje.cliente,
+    viaje.nombreCliente,
+    diasDemora,
+    viaje.servicio
+  );
 
   res.json({ msg: "Ok" });
+};
+
+const adicionalFacturar = async (
+  fechaTerminacion,
+  horaTerminacion,
+  cliente,
+  nombreCliente,
+  diasDemora,
+  servicio
+) => {
+  const aFacturar = new ConceptosAFActurar();
+
+  if (diasDemora >= 1) {
+    aFacturar.fecha = fechaTerminacion;
+    aFacturar.horaTerminacion = horaTerminacion;
+    aFacturar.cliente = cliente;
+    aFacturar.nombreCliente = nombreCliente;
+    aFacturar.descripcion0 = `Demora Contenedores`;
+    aFacturar.servicio = servicio;
+    aFacturar.descripcion1 = `Recargo por ${diasDemora} ${
+      diasDemora > 1 ? "dias" : "dia"
+    } de demora en la descarga ${
+      diasDemora > 1 ? "de los contenedores" : "del contenedor"
+    }`;
+    aFacturar.servicio = servicio;
+  }
+
+  await aFacturar.save();
 };
 
 const buscarTodosLosViajes = async (req, res) => {
@@ -1857,8 +2225,6 @@ const notificarAlChofer = async (req, res) => {
   const chofer = await Choferes.findById(viaje.chofer);
 
   if (viaje.domicilioOrigenCliente.length !== 0) {
-    console.log(viaje.domicilioOrigenCliente);
-
     origen = await Domicilios.findById(viaje.domicilioOrigenCliente);
     origenFantasia = origen.fantasia;
   }
@@ -1867,7 +2233,6 @@ const notificarAlChofer = async (req, res) => {
     origenFantasia = origen.nombre;
   }
   if (viaje.domicilioDestinoCliente.length !== 0) {
-    console.log(viaje.domicilioDestinoCliente);
     destino = await Domicilios.findById(viaje.domicilioOrigenCliente);
     destinoFantasia = destino.fantasia;
   }
@@ -1967,6 +2332,56 @@ const editarDocumento = async (req, res) => {
   }
 };
 
+const cargarConceptosAFacturar = async (
+  fecha,
+  cliente,
+  nombreCliente,
+  campos,
+  servicio
+) => {
+  const conceptos = new ConceptosAFActurar();
+
+  const {
+    descripcion0,
+    descripcion1,
+    descripcion2,
+    descripcion3,
+    descripcion4,
+    descripcion5,
+    precioBruto,
+    iva,
+    iibb,
+    precioNeto,
+  } = campos;
+
+  conceptos.fecha = fecha;
+  conceptos.cliente = cliente;
+  conceptos.nombreCliente = nombreCliente;
+  conceptos.campos = campos;
+
+  conceptos.servicio = servicio;
+  conceptos.descripcion0 = descripcion0;
+  conceptos.descripcion1 = descripcion1;
+  conceptos.descripcion2 = descripcion2;
+  conceptos.descripcion3 = descripcion3;
+  conceptos.descripcion4 = descripcion4;
+  conceptos.descripcion5 = descripcion5;
+  conceptos.precioBruto = precioBruto;
+  conceptos.iva = iva;
+  conceptos.iibb = iibb;
+  conceptos.precioNeto = precioNeto;
+
+  await conceptos.save();
+};
+
+const obtenerConceptos = async (req, res) => {
+  const { id } = req.params;
+
+  const conceptos = await ConceptosAFActurar.find({ servicio: id });
+
+  res.json(conceptos);
+};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -2012,4 +2427,5 @@ export {
   notificarAlChofer,
   obtenerDocumentacion,
   editarDocumento,
+  obtenerConceptos,
 };

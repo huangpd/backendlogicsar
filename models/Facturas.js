@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const facturaSchema = mongoose.Schema(
   {
+    numero: {
+      type: String,
+      trim: true,
+    },
     fecha: {
       type: Date,
       default: Date.now(),
@@ -9,50 +13,46 @@ const facturaSchema = mongoose.Schema(
     tipo: {
       type: String,
       trim: true,
-      require: true,
-    },
-    numero: {
-      type: String,
-      trim: true,
-      require: true,
     },
     cliente: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cliente",
     },
-    descripcion: {
+    campos: [
+      {
+        descripcion: {
+          type: String,
+          trim: true,
+        },
+        precioBruto: {
+          type: String,
+          trim: true,
+        },
+        iva: {
+          type: String,
+          trim: true,
+        },
+        iibb: {
+          type: String,
+          trim: true,
+        },
+        precioNeto: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
+    totalFactura: {
       type: String,
       trim: true,
-      require: true,
     },
-    precioBruto: {
+    link: {
       type: String,
       trim: true,
-      require: true,
-    },
-    iva: {
-      type: String,
-      trim: true,
-      require: true,
-    },
-    precioNeto: {
-      type: String,
-      trim: true,
-      require: true,
-    },
-    cae: {
-      type: String,
-      trim: true,
-      require: true,
     },
     estado: {
       type: String,
       trim: true,
-      require: true,
-    },
-    creador: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Usuario",
     },
   },
   {

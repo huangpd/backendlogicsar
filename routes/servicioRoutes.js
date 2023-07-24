@@ -47,6 +47,7 @@ import {
   notificarAlChofer,
   obtenerDocumentacion,
   editarDocumento,
+  obtenerConceptos,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -85,6 +86,8 @@ router.get(
 );
 
 router.get("/servicios-cliente/:id", checkAuth, obtenerServiciosCliente);
+
+router.get("/conceptos-a-facturar/:id", checkAuth, obtenerConceptos);
 
 router.post("/asignar-proveedor/:id", checkAuth, asignarProveedor);
 router.post("/aceptar-servicio/:id", checkAuth, aceptarServicio);

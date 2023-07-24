@@ -183,7 +183,6 @@ const nuevoCamion = async (req, res) => {
 
 const nuevoSemi = async (req, res) => {
   const { id } = req.params;
-  console.log("obtenemossemi");
   const semis = new Semis(req.body);
   const proveedor = await Proveedor.findById(id);
 

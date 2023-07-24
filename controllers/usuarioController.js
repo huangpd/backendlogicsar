@@ -84,7 +84,7 @@ const registrar = async (req, res) => {
   if (rol === "cliente") {
     const { idCliente } = req.body;
     const cliente = await Cliente.findById(idCliente);
-    console.log(cliente);
+
     usuario.empresa = cliente.nombre;
     usuario.cliente = cliente._id;
   }

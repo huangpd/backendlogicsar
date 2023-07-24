@@ -43,7 +43,6 @@ export const emailRegistro = async (datos) => {
         <p>Equipo Logicsar</p>
     `,
   });
-  console.log(info);
 };
 
 export const emailOlvidePassword = async (datos) => {
@@ -147,11 +146,6 @@ export const emailNuevoViajeCliente = async (datos) => {
 };
 
 export const notificarViajes = async (usuarios, servicio, viajes) => {
-  console.log("intento enviar mail");
-  console.log(usuarios);
-  console.log(servicio);
-  console.log(viajes);
-
   const hemail = process.env.EMAIL;
   const hpass = process.env.PASSWORD;
   const host = process.env.HOST;
@@ -293,9 +287,7 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
           <p>Equipo CarryOn</p>
       `,
     });
-    console.log(info);
   }
-  console.log("Email Enviado");
 };
 
 export const notificarRecepcionViaje = async (usuarios, servicio) => {
@@ -388,7 +380,6 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
       });
     }
   } else {
-    console.log(usuarios);
     const { email, nombre } = usuarios[0];
     const {
       nombreCliente,
@@ -405,8 +396,6 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
       numeroCliente,
       despachoAduana,
     } = servicio;
-
-    console.log(email);
 
     const info = await transport.sendMail({
       from: '"CarryOn" <carryon.arg@gmail.com>',
@@ -462,7 +451,6 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
       `,
     });
   }
-  console.log("Email Enviado");
 };
 
 export const soloLogicsar = async (servicio) => {
@@ -628,7 +616,6 @@ export const notificarViajeSoloLogicsar = async (servicio, viajes) => {
 
       `,
   });
-  console.log(info);
 };
 
 export const notificarCamionesSoloLogicsar = async (informacionEnviar) => {
@@ -645,8 +632,6 @@ export const notificarCamionesSoloLogicsar = async (informacionEnviar) => {
       pass: hpass,
     },
   });
-
-  console.log(informacionEnviar);
 
   //   const info = await transport.sendMail({
   //     from: '"CarryOn" <carryon.arg@gmail.com>',
@@ -702,5 +687,4 @@ export const notificarCamionesSoloLogicsar = async (informacionEnviar) => {
 
   //       `,
   //   });
-  //   console.log(info);
 };

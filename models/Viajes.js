@@ -147,6 +147,12 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    fantasiaOrigen: {
+      type: String,
+    },
+    fantasiaDestino: {
+      type: String,
+    },
     domicilioDestinoTerminal: [
       {
         type: mongoose.Schema.Types.ObjectId,
