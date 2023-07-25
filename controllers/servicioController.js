@@ -256,7 +256,8 @@ const nuevoServicioImportacion = async (req, res) => {
           servicioalmacenado._id,
           `${servicioalmacenado.numeroPedido}/1`,
           viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor
+          numeroContenedores[0].numeroContenedor,
+          "Remito"
         );
         await cargarDocumentacionARecibir(
           cliente.nombre,
@@ -352,6 +353,303 @@ const nuevoServicioExportacion = async (req, res) => {
     actualizacion.description = Date.now();
     actualizacion.color = "text-green-500";
     actualizacion.title = `Servicio exportacion Nro ${servicioalmacenado.numeroPedido} ingresado`;
+
+    if (
+      servicioalmacenado.tipoCarga === "cajas" ||
+      servicioalmacenado.tipoCarga === "bultos" ||
+      servicioalmacenado.tipoCarga === "pallets"
+    ) {
+      const nuevoViaje = new Viajes({
+        numeroContenedor: "Mercaderia Suelta",
+        fechaOrigen: servicioalmacenado.fechaCarga,
+        horaOrigen: servicioalmacenado.horaCarga,
+        creador: req.usuario._id,
+        cliente: cliente._id,
+        nombreCliente: cliente.nombre,
+        domicilioOrigenCliente: origenCarga,
+        nombreDomicilioOrigenCliente: domicilio.direccion,
+        fantasiaOrigen: domicilio.fantasia,
+        fantasiaDestino: destino.nombre,
+        domicilioDestinoTerminal: destinoCarga,
+        estado: estadoViaje.estado,
+        tipoServicio: servicioalmacenado.tipoOperacion,
+        tipoCarga: servicioalmacenado.tipoCarga,
+        nombreDomicilioDestinoTerminal: destino.direccion,
+        servicio: servicioalmacenado._id,
+        numeroDeViaje: `${servicioalmacenado.numeroPedido}/1`,
+        cantidadCarga: servicioalmacenado.cantidad,
+        volumenCarga: servicioalmacenado.volumen,
+        pesoCarga: servicioalmacenado.peso,
+        estadoServicio: servicio.estado,
+        notificado: "Sin Notificar",
+        observaciones: servicioalmacenado.observaciones,
+        referenciaCliente: servicio.numeroCliente,
+      });
+
+      const viajeAlmacenado = await nuevoViaje.save();
+      servicioalmacenado.viajesSueltos = viajeAlmacenado._id;
+      await cargarDocumentacionARecibir(
+        cliente.nombre,
+        cliente._id,
+        servicioalmacenado.numeroPedido,
+        servicioalmacenado._id,
+        `${servicioalmacenado.numeroPedido}/1`,
+        viajeAlmacenado._id,
+        "Mercaderia sin Contenedor",
+        "Remito"
+      );
+
+      const conceptos = {
+        descripcion0: `${servicioalmacenado.tipoCarga}`,
+        descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+          servicioalmacenado.tipoCarga
+        } - ${servicioalmacenado.peso} - desde ${
+          domicilio.fantasia
+            ? `${domicilio.fantasia} - (${domicilio.direccion})`
+            : `${domicilio.direccion}- ${domicilio.localidad}`
+        } hasta ${
+          destino.nombre
+            ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+            : `${destino.direccion} - ${destino.localidad}`
+        }`,
+        descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+        descripcion3: "",
+        descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+        descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+      };
+      await cargarConceptosAFacturar(
+        viajeAlmacenado.fechaOrigen,
+        cliente._id,
+        cliente.nombre,
+        conceptos,
+
+        servicioalmacenado._id
+      );
+    }
+    if (
+      servicioalmacenado.tipoCarga === "Contenedor20" ||
+      servicioalmacenado.tipoCarga === "Contenedor40" ||
+      servicioalmacenado.tipoCarga === "Contenedor40HC"
+    ) {
+      if (numeroContenedores.length > 1) {
+        const viajesPromises = numeroContenedores.map(
+          async (numeroContenedor, index) => {
+            const nuevoViaje = new Viajes({
+              numeroContenedor: numeroContenedor.numeroContenedor,
+              direccionRetorno: numeroContenedor.direccionRetorno,
+              fechaOrigen: servicioalmacenado.fechaCarga,
+              horaOrigen: servicioalmacenado.horaCarga,
+              creador: req.usuario._id,
+              cliente: cliente._id,
+              nombreCliente: cliente.nombre,
+              domicilioOrigenCliente: origenCarga,
+              fantasiaOrigen: domicilio.fantasia,
+              fantasiaDestino: destino.nombre,
+              nombreDomicilioOrigenCliente: domicilio.direccion,
+              domicilioDestinoTerminal: destinoCarga,
+              estado: estadoViaje.estado,
+              tipoServicio: servicioalmacenado.tipoOperacion,
+              tipoCarga: servicioalmacenado.tipoCarga,
+              nombreDomicilioDestinoTerminal: destino.direccion,
+              servicio: servicioalmacenado._id,
+              numeroDeViaje: `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              cantidadCarga: servicioalmacenado.cantidad,
+              volumenCarga: servicioalmacenado.volumen,
+              pesoCarga: servicioalmacenado.peso,
+              estadoServicio: servicio.estado,
+              notificado: "Sin Notificar",
+              referenciaCliente: servicio.numeroCliente,
+            });
+
+            const viajeAlmacenado = await nuevoViaje.save();
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Remito"
+            );
+            await cargarDocumentacionARecibir(
+              cliente.nombre,
+              cliente._id,
+              servicioalmacenado.numeroPedido,
+              servicioalmacenado._id,
+              `${servicioalmacenado.numeroPedido}/${index + 1}`,
+              viajeAlmacenado._id,
+              numeroContenedor.numeroContenedor,
+              "Devolucion Vacio"
+            );
+            const conceptos = {
+              descripcion0: `${servicioalmacenado.tipoCarga}`,
+              descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+                servicioalmacenado.tipoCarga
+              } - ${servicioalmacenado.peso} - desde ${
+                domicilio.fantasia
+                  ? `${domicilio.fantasia} - (${domicilio.direccion})`
+                  : `${domicilio.direccion}- ${domicilio.localidad}`
+              } hasta ${
+                destino.nombre
+                  ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+                  : `${destino.direccion} - ${destino.localidad}`
+              }`,
+              descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+              descripcion3: "",
+              descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+              descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+            };
+            await cargarConceptosAFacturar(
+              viajeAlmacenado.fechaOrigen,
+              cliente._id,
+              cliente.nombre,
+              conceptos,
+
+              servicioalmacenado._id
+            );
+            return viajeAlmacenado._id;
+          }
+        );
+
+        const viajesIds = await Promise.all(viajesPromises);
+
+        servicioalmacenado.numeroContenedores.forEach(
+          (numeroContenedor, index) => {
+            numeroContenedor.viaje = viajesIds[index];
+          }
+        );
+      } else if (numeroContenedores.length === 1) {
+        const nuevoViaje = new Viajes({
+          numeroContenedor: numeroContenedores[0].numeroContenedor,
+          direccionRetorno: numeroContenedores[0].direccionRetorno,
+          estado: estadoViaje.estado,
+          horaOrigen: servicioalmacenado.horaCarga,
+          fechaOrigen: servicioalmacenado.fechaCarga,
+          creador: req.usuario._id,
+          cliente: cliente._id,
+          nombreCliente: cliente.nombre,
+          domicilioOrigenCliente: origenCarga,
+          fantasiaOrigen: domicilio.fantasia,
+          fantasiaDestino: destino.nombre,
+          nombreDomicilioOrigenCliente: domicilio.direccion,
+          domicilioDestinoTerminal: destinoCarga,
+          nombreDomicilioDestinoTerminal: destino.direccion,
+          servicio: servicioalmacenado._id,
+          tipoServicio: servicioalmacenado.tipoOperacion,
+          tipoCarga: servicioalmacenado.tipoCarga,
+          numeroDeViaje: `${servicioalmacenado.numeroPedido}/1`,
+          cantidadCarga: servicioalmacenado.cantidad,
+          volumenCarga: servicioalmacenado.volumen,
+          pesoCarga: servicioalmacenado.peso,
+          estadoServicio: servicio.estado,
+          notificado: "Sin Notificar",
+          observaciones: servicioalmacenado.observaciones,
+          referenciaCliente: servicio.numeroCliente,
+        });
+        const viajeAlmacenado = await nuevoViaje.save();
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/$1`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor
+        );
+        await cargarDocumentacionARecibir(
+          cliente.nombre,
+          cliente._id,
+          servicioalmacenado.numeroPedido,
+          servicioalmacenado._id,
+          `${servicioalmacenado.numeroPedido}/1`,
+          viajeAlmacenado._id,
+          numeroContenedores[0].numeroContenedor,
+          "Devolucion Vacio"
+        );
+        const conceptos = {
+          descripcion0: `${servicioalmacenado.tipoCarga}`,
+          descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
+            servicioalmacenado.tipoCarga
+          } - ${servicioalmacenado.peso} - desde ${
+            domicilio.fantasia
+              ? `${domicilio.fantasia} - (${domicilio.direccion})`
+              : `${domicilio.direccion}- ${domicilio.localidad}`
+          } hasta ${
+            destino.nombre
+              ? `${destino.nombre} - (${destino.direccion} - ${destino.localidad})`
+              : `${destino.direccion} - ${destino.localidad}`
+          }`,
+          descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
+          descripcion3: "",
+          descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+          descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
+        };
+        await cargarConceptosAFacturar(
+          viajeAlmacenado.fechaOrigen,
+          cliente._id,
+          cliente.nombre,
+          conceptos,
+
+          servicioalmacenado._id
+        );
+
+        servicioalmacenado.numeroContenedores[0].viaje = viajeAlmacenado._id;
+      }
+    }
+    cliente.servicios.push(servicioalmacenado._id);
+    await servicioalmacenado.save();
+    await actualizacion.save();
+    await cliente.save();
+
+    const usuarios = await Usuario.find({
+      cliente: servicioalmacenado.cliente,
+    });
+
+    if (usuarios.length == 0) {
+      await soloLogicsar(servicioalmacenado);
+    } else {
+      await notificarRecepcionViaje(usuarios, servicioalmacenado);
+    }
+
+    res.json(servicioalmacenado);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const nuevoServicioDevolucionVacios = async (req, res) => {
+  const { idCliente } = req.body;
+  const { numeroContenedores } = req.body;
+  const { origenCarga } = req.body;
+  const { destinoCarga } = req.body;
+  const cliente = await Cliente.findById(idCliente);
+  const servicio = new Servicio(req.body);
+
+  const actualizacion = new Actualizaciones();
+
+  const destino = await Devoluciones.findById(destinoCarga);
+  const domicilio = await Domicilios.findById(origenCarga);
+
+  const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "2" });
+
+  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: "1" });
+
+  servicio.nombreCliente = cliente.nombre;
+  servicio.cliente = idCliente;
+  servicio.estado = estadoServicio.estado;
+  servicio.origenCarga = domicilio.direccion;
+  servicio.destinoCarga = destino.direccion;
+  servicio.notificar = "Sin Notificar";
+  servicio.nombreTerminal = domicilio.nombre;
+
+  try {
+    const servicioalmacenado = await servicio.save();
+
+    actualizacion.icon = "PlusCircleIcon";
+    actualizacion.description = Date.now();
+    actualizacion.color = "text-green-500";
+    actualizacion.title = `Servicio Devolucion Vacios Nro ${servicioalmacenado.numeroPedido} ingresado`;
 
     if (
       servicioalmacenado.tipoCarga === "cajas" ||
@@ -850,7 +1148,8 @@ const nuevoTransito = async (req, res) => {
           servicioalmacenado._id,
           `${servicioalmacenado.numeroPedido}/$1`,
           viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor
+          numeroContenedores[0].numeroContenedor,
+          "Remito"
         );
         await cargarDocumentacionARecibir(
           cliente.nombre,
@@ -1146,7 +1445,8 @@ const nuevoServicioNacional = async (req, res) => {
           servicioalmacenado._id,
           `${servicioalmacenado.numeroPedido}/1`,
           viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor
+          numeroContenedores[0].numeroContenedor,
+          "Remito"
         );
         await cargarDocumentacionARecibir(
           cliente.nombre,
@@ -2285,7 +2585,12 @@ const cargarDocumentacionARecibir = async (
   documentacion.numeroViaje = nroViaje;
   documentacion.numeroServicio = nroServicio;
   documentacion.tipoDocumentacion = tipo;
-  documentacion.estado = "Esperando Numero";
+  if (tipo === "Remito") {
+    documentacion.estado = "Esperando Numero";
+  }
+  if (tipo === "Devolucion Vacio") {
+    documentacion.estado = "Esperando Link";
+  }
   documentacion.cliente = idCliente;
   documentacion.nombreCliente = nombreCliente;
   documentacion.servicio = idServicio;
@@ -2428,4 +2733,5 @@ export {
   obtenerDocumentacion,
   editarDocumento,
   obtenerConceptos,
+  nuevoServicioDevolucionVacios,
 };

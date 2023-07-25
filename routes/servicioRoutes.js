@@ -48,6 +48,7 @@ import {
   obtenerDocumentacion,
   editarDocumento,
   obtenerConceptos,
+  nuevoServicioDevolucionVacios,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -131,6 +132,8 @@ router.post("/estado-viajes", checkAuth, nuevoEstadoViaje);
 
 router.post("/importacion", checkAuth, nuevoServicioImportacion);
 router.post("/exportacion", checkAuth, nuevoServicioExportacion);
+router.post("/vacios", checkAuth, nuevoServicioDevolucionVacios);
+
 router.post("/transito", checkAuth, nuevoTransito);
 router.post("/nacional", checkAuth, nuevoServicioNacional);
 
