@@ -561,7 +561,7 @@ const nuevoServicioExportacion = async (req, res) => {
           cliente._id,
           servicioalmacenado.numeroPedido,
           servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/${index + 1}`,
+          `${servicioalmacenado.numeroPedido}/1`,
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor,
           "Devolucion Vacio"
@@ -1144,7 +1144,7 @@ const nuevoServicioNacional = async (req, res) => {
           cliente._id,
           servicioalmacenado.numeroPedido,
           servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/$1`,
+          `${servicioalmacenado.numeroPedido}/1`,
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor
         );
@@ -1153,7 +1153,7 @@ const nuevoServicioNacional = async (req, res) => {
           cliente._id,
           servicioalmacenado.numeroPedido,
           servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/${index + 1}`,
+          `${servicioalmacenado.numeroPedido}/1`,
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor,
           "Devolucion Vacio"
