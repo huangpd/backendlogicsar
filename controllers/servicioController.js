@@ -82,9 +82,10 @@ const nuevoServicioImportacion = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
-        estadoServicio: servicio.estado,
+        estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
-        referenciaCliente: servicio.numeroCliente,
+        referenciaCliente: servicioalmacenado.numeroCliente,
+        observacionesServicio: servicioalmacenado.observaciones,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -137,7 +138,6 @@ const nuevoServicioImportacion = async (req, res) => {
           async (numeroContenedor, index) => {
             const nuevoViaje = new Viajes({
               numeroContenedor: numeroContenedor.numeroContenedor,
-              direccionRetorno: numeroContenedor.direccionRetorno,
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
               creador: req.usuario._id,
@@ -157,10 +157,10 @@ const nuevoServicioImportacion = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
-              estadoServicio: servicio.estado,
+              estadoServicio: servicioalmacenado.estado,
               notificado: "Sin Notificar",
-              observaciones: servicioalmacenado.observaciones,
-              referenciaCliente: servicio.numeroCliente,
+              referenciaCliente: servicioalmacenado.numeroCliente,
+              observacionesServicio: servicioalmacenado.observaciones,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -223,7 +223,11 @@ const nuevoServicioImportacion = async (req, res) => {
       } else if (numeroContenedores.length === 1) {
         const nuevoViaje = new Viajes({
           numeroContenedor: numeroContenedores[0].numeroContenedor,
-          direccionRetorno: numeroContenedores[0].direccionRetorno,
+          fechaDevolucion: numeroContenedores[0].fechaDevolucion,
+          horaDevolucion: numeroContenedores[0].horaDevolucionContenedor,
+          fechaVencimientoDevolucion:
+            numeroContenedores[0].fechaVencimientoDevolucionContenedor,
+          lugarDevolucion: numeroContenedores[0].direccionRetorno,
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
@@ -243,10 +247,10 @@ const nuevoServicioImportacion = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
-          estadoServicio: servicio.estado,
+          estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
-          observaciones: servicioalmacenado.observaciones,
-          referenciaCliente: servicio.numeroCliente,
+          observacionesServicio: servicioalmacenado.observaciones,
+          referenciaCliente: servicioalmacenado.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -380,10 +384,11 @@ const nuevoServicioExportacion = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
-        estadoServicio: servicio.estado,
+        estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
-        observaciones: servicioalmacenado.observaciones,
-        referenciaCliente: servicio.numeroCliente,
+        observacionesServicio: servicioalmacenado.observaciones,
+
+        referenciaCliente: servicioalmacenado.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -436,7 +441,6 @@ const nuevoServicioExportacion = async (req, res) => {
           async (numeroContenedor, index) => {
             const nuevoViaje = new Viajes({
               numeroContenedor: numeroContenedor.numeroContenedor,
-              direccionRetorno: numeroContenedor.direccionRetorno,
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
               creador: req.usuario._id,
@@ -456,9 +460,10 @@ const nuevoServicioExportacion = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
-              estadoServicio: servicio.estado,
+              estadoServicio: servicioalmacenado.estado,
               notificado: "Sin Notificar",
-              referenciaCliente: servicio.numeroCliente,
+              referenciaCliente: servicioalmacenado.numeroCliente,
+              observacionesServicio: servicioalmacenado.observaciones,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -522,7 +527,12 @@ const nuevoServicioExportacion = async (req, res) => {
       } else if (numeroContenedores.length === 1) {
         const nuevoViaje = new Viajes({
           numeroContenedor: numeroContenedores[0].numeroContenedor,
-          direccionRetorno: numeroContenedores[0].direccionRetorno,
+          numeroContenedor: numeroContenedores[0].numeroContenedor,
+          fechaDevolucion: numeroContenedores[0].fechaDevolucion,
+          horaDevolucion: numeroContenedores[0].horaDevolucionContenedor,
+          fechaVencimientoDevolucion:
+            numeroContenedores[0].fechaVencimientoDevolucionContenedor,
+          lugarDevolucion: numeroContenedores[0].direccionRetorno,
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
@@ -542,10 +552,11 @@ const nuevoServicioExportacion = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
-          estadoServicio: servicio.estado,
+          estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
-          observaciones: servicioalmacenado.observaciones,
-          referenciaCliente: servicio.numeroCliente,
+          observacionesServicio: servicioalmacenado.observaciones,
+
+          referenciaCliente: servicioalmacenado.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -677,10 +688,11 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
-        estadoServicio: servicio.estado,
+        estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
-        observaciones: servicioalmacenado.observaciones,
-        referenciaCliente: servicio.numeroCliente,
+        observacionesServicio: servicioalmacenado.observaciones,
+
+        referenciaCliente: servicioalmacenado.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -733,7 +745,7 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
           async (numeroContenedor, index) => {
             const nuevoViaje = new Viajes({
               numeroContenedor: numeroContenedor.numeroContenedor,
-              direccionRetorno: numeroContenedor.direccionRetorno,
+
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
               creador: req.usuario._id,
@@ -753,9 +765,10 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
-              estadoServicio: servicio.estado,
+              estadoServicio: servicioalmacenado.estado,
               notificado: "Sin Notificar",
-              referenciaCliente: servicio.numeroCliente,
+              observacionesServicio: servicioalmacenado.observaciones,
+              referenciaCliente: servicioalmacenado.numeroCliente,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -819,7 +832,12 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
       } else if (numeroContenedores.length === 1) {
         const nuevoViaje = new Viajes({
           numeroContenedor: numeroContenedores[0].numeroContenedor,
-          direccionRetorno: numeroContenedores[0].direccionRetorno,
+          numeroContenedor: numeroContenedores[0].numeroContenedor,
+          fechaDevolucion: numeroContenedores[0].fechaDevolucion,
+          horaDevolucion: numeroContenedores[0].horaDevolucionContenedor,
+          fechaVencimientoDevolucion:
+            numeroContenedores[0].fechaVencimientoDevolucionContenedor,
+          lugarDevolucion: numeroContenedores[0].direccionRetorno,
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
@@ -839,10 +857,11 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
-          estadoServicio: servicio.estado,
+          estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
-          observaciones: servicioalmacenado.observaciones,
-          referenciaCliente: servicio.numeroCliente,
+          observacionesServicio: servicioalmacenado.observaciones,
+
+          referenciaCliente: servicioalmacenado.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -973,10 +992,11 @@ const nuevoTransito = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
-        estadoServicio: servicio.estado,
+        estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
-        observaciones: servicioalmacenado.observaciones,
-        referenciaCliente: servicio.numeroCliente,
+        observacionesServicio: servicioalmacenado.observaciones,
+
+        referenciaCliente: servicioalmacenado.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -1029,7 +1049,6 @@ const nuevoTransito = async (req, res) => {
           async (numeroContenedor, index) => {
             const nuevoViaje = new Viajes({
               numeroContenedor: numeroContenedor.numeroContenedor,
-              direccionRetorno: numeroContenedor.direccionRetorno,
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
               creador: req.usuario._id,
@@ -1049,10 +1068,11 @@ const nuevoTransito = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
-              estadoServicio: servicio.estado,
+              estadoServicio: servicioalmacenado.estado,
               notificado: "Sin Notificar",
-              observaciones: servicioalmacenado.observaciones,
-              referenciaCliente: servicio.numeroCliente,
+              observacionesServicio: servicioalmacenado.observaciones,
+
+              referenciaCliente: servicioalmacenado.numeroCliente,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -1116,7 +1136,12 @@ const nuevoTransito = async (req, res) => {
       } else if (numeroContenedores.length === 1) {
         const nuevoViaje = new Viajes({
           numeroContenedor: numeroContenedores[0].numeroContenedor,
-          direccionRetorno: numeroContenedores[0].direccionRetorno,
+          numeroContenedor: numeroContenedores[0].numeroContenedor,
+          fechaDevolucion: numeroContenedores[0].fechaDevolucion,
+          horaDevolucion: numeroContenedores[0].horaDevolucionContenedor,
+          fechaVencimientoDevolucion:
+            numeroContenedores[0].fechaVencimientoDevolucionContenedor,
+          lugarDevolucion: numeroContenedores[0].direccionRetorno,
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
@@ -1136,9 +1161,10 @@ const nuevoTransito = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
-          estadoServicio: servicio.estado,
-          observaciones: servicioalmacenado.observaciones,
-          referenciaCliente: servicio.numeroCliente,
+          estadoServicio: servicioalmacenado.estado,
+          observacionesServicio: servicioalmacenado.observaciones,
+
+          referenciaCliente: servicioalmacenado.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -1269,10 +1295,11 @@ const nuevoServicioNacional = async (req, res) => {
         cantidadCarga: servicioalmacenado.cantidad,
         volumenCarga: servicioalmacenado.volumen,
         pesoCarga: servicioalmacenado.peso,
-        estadoServicio: servicio.estado,
+        estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
-        observaciones: servicioalmacenado.observaciones,
-        referenciaCliente: servicio.numeroCliente,
+        observacionesServicio: servicioalmacenado.observaciones,
+
+        referenciaCliente: servicioalmacenado.numeroCliente,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -1324,7 +1351,7 @@ const nuevoServicioNacional = async (req, res) => {
           async (numeroContenedor, index) => {
             const nuevoViaje = new Viajes({
               numeroContenedor: numeroContenedor.numeroContenedor,
-              direccionRetorno: numeroContenedor.direccionRetorno,
+
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
               creador: req.usuario._id,
@@ -1344,10 +1371,11 @@ const nuevoServicioNacional = async (req, res) => {
               cantidadCarga: servicioalmacenado.cantidad,
               volumenCarga: servicioalmacenado.volumen,
               pesoCarga: servicioalmacenado.peso,
-              estadoServicio: servicio.estado,
+              estadoServicio: servicioalmacenado.estado,
               notificado: "Sin Notificar",
-              observaciones: servicioalmacenado.observaciones,
-              referenciaCliente: servicio.numeroCliente,
+              observacionesServicio: servicioalmacenado.observaciones,
+
+              referenciaCliente: servicioalmacenado.numeroCliente,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -1412,7 +1440,12 @@ const nuevoServicioNacional = async (req, res) => {
       } else if (numeroContenedores.length === 1) {
         const nuevoViaje = new Viajes({
           numeroContenedor: numeroContenedores[0].numeroContenedor,
-          direccionRetorno: numeroContenedores[0].direccionRetorno,
+          numeroContenedor: numeroContenedores[0].numeroContenedor,
+          fechaDevolucion: numeroContenedores[0].fechaDevolucion,
+          horaDevolucion: numeroContenedores[0].horaDevolucionContenedor,
+          fechaVencimientoDevolucion:
+            numeroContenedores[0].fechaVencimientoDevolucionContenedor,
+          lugarDevolucion: numeroContenedores[0].direccionRetorno,
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
@@ -1432,10 +1465,11 @@ const nuevoServicioNacional = async (req, res) => {
           cantidadCarga: servicioalmacenado.cantidad,
           volumenCarga: servicioalmacenado.volumen,
           pesoCarga: servicioalmacenado.peso,
-          estadoServicio: servicio.estado,
+          estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
-          observaciones: servicioalmacenado.observaciones,
-          referenciaCliente: servicio.numeroCliente,
+          observacionesServicio: servicioalmacenado.observaciones,
+
+          referenciaCliente: servicioalmacenado.numeroCliente,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -2231,7 +2265,7 @@ const editarViaje = async (req, res) => {
   viaje.horaOrigen = req.body.horaOrigen || viaje.horaOrigen;
   viaje.direccionRetorno = req.body.direccionRetorno || viaje.direccionRetorno;
   viaje.estado = req.body.estado || viaje.estado;
-  viaje.observaciones = req.body.observaciones || viaje.observaciones;
+  viaje.observacionesViaje = req.body.observaciones || viaje.observacionesViaje;
   viaje.pesoCarga = req.body.pesoCarga || viaje.pesoCarga;
   viaje.volumenCarga = req.body.volumenCarga || viaje.volumenCarga;
   viaje.cantidadCarga = req.body.cantidadCarga || viaje.cantidadCarga;
@@ -2458,7 +2492,7 @@ const terminarViaje = async (req, res) => {
   viaje.fechaTerminacion = fechaTerminacion;
   viaje.horaTerminacion = horaTerminacion;
   viaje.diasDemora = diasDemora;
-  viaje.observaciones = observaciones;
+  viaje.observacionesViaje = observaciones;
 
   await viaje.save();
   await adicionalFacturar(
@@ -2561,7 +2595,7 @@ const notificarAlChofer = async (req, res) => {
     origen: origen.direccion,
     destinoFantasia: destinoFantasia,
     destino: destino.direccion,
-    observaciones: viaje.observaciones,
+    observaciones: viaje.observacionesViaje,
   };
 
   await notificarViajeSoloLogicsar(informacionEnviar);
@@ -2687,6 +2721,22 @@ const obtenerConceptos = async (req, res) => {
   res.json(conceptos);
 };
 
+const completarDevolucion = async (req, res) => {
+  const { id } = req.params;
+
+  const viaje = await Viajes.findById(id);
+
+  viaje.fechaDevolucion = req.body.fechaDevolucion || viaje.fechaDevolucion;
+  viaje.horaDevolucion = req.body.horaDevolucion || viaje.horaDevolucion;
+  viaje.fechaVencimientoDevolucion =
+    req.body.fechaVencimientoDevolucion || viaje.fechaVencimientoDevolucion;
+  viaje.lugarDevolucion = req.body.lugarDevolucion || viaje.lugarDevolucion;
+
+  await viaje.save();
+
+  res.json({ msg: "ok" });
+};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -2734,4 +2784,5 @@ export {
   editarDocumento,
   obtenerConceptos,
   nuevoServicioDevolucionVacios,
+  completarDevolucion,
 };

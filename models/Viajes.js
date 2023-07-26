@@ -20,11 +20,14 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    observaciones: [
-      {
-        type: String,
-      },
-    ],
+    observacionesViaje: {
+      type: String,
+      trim: true,
+    },
+    observacionesServicio: {
+      type: String,
+      trim: true,
+    },
 
     cantidadCarga: {
       type: String,
@@ -230,6 +233,22 @@ const viajesSchema = mongoose.Schema(
       trim: true,
     },
     diasDemora: {
+      type: String,
+      trim: true,
+    },
+    fechaDevolucion: {
+      type: String,
+      trim: true,
+    },
+    horaDevolucion: {
+      type: String,
+      trim: true,
+    },
+    fechaVencimientoDevolucion: {
+      type: String,
+      trim: true,
+    },
+    lugarDevolucion: {
       type: String,
       trim: true,
     },
