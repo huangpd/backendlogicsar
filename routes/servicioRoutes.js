@@ -50,6 +50,8 @@ import {
   obtenerConceptos,
   nuevoServicioDevolucionVacios,
   completarDevolucion,
+  editarConcepto,
+  agregarConcepto,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -62,6 +64,7 @@ router.get("/todos-servicios", checkAuth, obtenerTodosLosServicios);
 router.get("/obtener-viajes/:id", checkAuth, obtenerViajesServicio);
 
 router.get("/obtener-viaje/:id", checkAuth, obtenerViaje);
+
 router.get("/obtener-documentacion/:id", checkAuth, obtenerDocumentacion);
 
 router.get("/obtener-viajes-sin-notificar", checkAuth, obtenerSinNotificar);
@@ -113,6 +116,7 @@ router.post("/asignar-equipo/:id", checkAuth, asignarEquipo);
 router.post("/aprobar/:id", checkAuth, aprobarEquipo);
 
 router.post("/editar-viaje/:id", checkAuth, editarViaje);
+router.post("/editar-concepto/:id", checkAuth, editarConcepto);
 
 router.post("/completar-devolucion/:id", checkAuth, completarDevolucion);
 
@@ -141,6 +145,9 @@ router.post("/transito", checkAuth, nuevoTransito);
 router.post("/nacional", checkAuth, nuevoServicioNacional);
 
 router.post("/nueva-terminal", checkAuth, nuevaTerminal);
+
+router.post("/agregar-concepto", checkAuth, agregarConcepto);
+
 router.post("/nueva-direccion-devolucion", checkAuth, nuevoLugarDevolucion);
 
 export default router;
