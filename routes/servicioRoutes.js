@@ -52,6 +52,7 @@ import {
   completarDevolucion,
   editarConcepto,
   agregarConcepto,
+  agregarViajes,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -106,6 +107,8 @@ router.post(
 );
 
 router.post("/cambiar-estado-viaje/:id", checkAuth, actualizarEstadoViaje);
+
+router.post("/agregar-viaje/:id", checkAuth, agregarViajes);
 
 router.post("/notificar-viajes/:id", checkAuth, notificarViaje);
 router.post("/notificar-chofer/:id", checkAuth, notificarAlChofer);

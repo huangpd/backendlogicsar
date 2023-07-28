@@ -2164,9 +2164,15 @@ const actualizarEstadoServicio = async (req, res) => {
 
       // Iterar sobre los viajes asociados al servicio y actualizar estadoServicio
       const viajes = await Viajes.find({ servicio: servicio._id });
-      for (const viaje of viajes) {
-        viaje.estadoServicio = estado;
-        await viaje.save();
+      if (viajes.length > 1) {
+        for (const viaje of viajes) {
+          viaje.estadoServicio = estadoAlmacenado.estado;
+          await viaje.save();
+        }
+      }
+      if (viajes.length == 1) {
+        viajes[0].estadoServicio = estadoAlmacenado.estado;
+        await viajes[0].save();
       }
 
       await actualizacion.save();
@@ -2302,6 +2308,8 @@ const filtrarViajes = async (req, res) => {
 const editarViaje = async (req, res) => {
   const { id } = req.params;
   const { tipoServicio } = req.body;
+
+  console.log(req.body.observaciones);
 
   const viaje = await Viajes.findById(id);
   const documentacion = await Documentacion.find({ viaje: id });
@@ -2539,13 +2547,41 @@ const terminarViaje = async (req, res) => {
   const { diasDemora } = req.body;
   const { observaciones } = req.body;
 
+  // const estadoServicios = await EstadosServicio.findOne({ numeroEstado: "7" });
   const viaje = await Viajes.findById(id);
+  // const servicio = await Servicio.findById(viaje.servicio);
+
+  // const viajesDelServicio = await Viajes.find({ servicio: viaje.servicio });
+
+  // console.log(viajesDelServicio);
 
   viaje.adicionales = adicionales;
   viaje.fechaTerminacion = fechaTerminacion;
   viaje.horaTerminacion = horaTerminacion;
   viaje.diasDemora = diasDemora;
   viaje.observacionesViaje = observaciones;
+
+  // if (viajesDelServicio.length == 1) {
+  //   servicio.estado = estadoServicios.estado;
+  //   const servicioAlmacenado = await servicio.save();
+  //   viaje.estadoServicio = servicioAlmacenado.estado;
+  //   await viaje.save();
+  // }
+
+  // if (viajesDelServicio.length > 1) {
+  //   const todosTerminados = viajesDelServicio.every(
+  //     (viaje) =>
+  //       viaje.estado === "terminado" &&
+  //       (!viaje.estado2 || viaje.estado2 !== "eliminado")
+  //   );
+
+  //   if (todosTerminados) {
+  //     servicio.estado = estadoServicios.estado;
+  //     const servicioAlmacenado = await servicio.save();
+  //     viaje.estadoServicio = servicioAlmacenado.estado;
+  //     await viaje.save();
+  //   }
+  // }
 
   await viaje.save();
   await adicionalFacturar(
@@ -2833,6 +2869,85 @@ const agregarConcepto = async (req, res) => {
   }
 };
 
+const agregarViajes = async (req, res) => {
+  const { id } = req.params;
+
+  const servicio = await Servicio.findById(id);
+
+  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: "1" });
+
+  const viajesAlmacenados = await Viajes.find({ servicio: id });
+
+  console.log(servicio);
+  console.log(viajesAlmacenados);
+
+  const viaje = new Viajes();
+
+  (viaje.numeroContenedor = "Mercaderia Suelta"),
+    (viaje.fechaOrigen = servicio.fechaCarga),
+    (viaje.horaOrigen = servicio.horaCarga),
+    (viaje.cliente = servicio.cliente),
+    (viaje.nombreCliente = servicio.nombreCliente);
+  if (
+    servicio.tipoOperacion === "importacion" ||
+    servicio.tipoOperacion === "transito-aduanero"
+  ) {
+    viaje.domicilioOrigenTerminal =
+      viajesAlmacenados[0].domicilioOrigenTerminal;
+    viaje.nombreDomicilioOrigenTerminal =
+      viajesAlmacenados[0].nombreDomicilioOrigenTerminal;
+  }
+  if (
+    servicio.tipoOperacion === "exportacion" ||
+    servicio.tipoOperacion === "nacional"
+  ) {
+    viaje.domicilioOrigenCliente = viajesAlmacenados[0].domicilioOrigenCliente;
+    viaje.nombreDomicilioOrigenCliente =
+      viajesAlmacenados[0].nombreDomicilioOrigenCliente;
+  }
+  if (
+    servicio.tipoOperacion === "importacion" ||
+    servicio.tipoOperacion === "nacional"
+  ) {
+    viaje.domicilioDestinoCliente =
+      viajesAlmacenados[0].domicilioDestinoCliente;
+    viaje.nombreDomicilioDestinoCliente =
+      viajesAlmacenados[0].nombreDomicilioDestinoCliente;
+  }
+  if (
+    servicio.tipoOperacion === "exportacion" ||
+    servicio.tipoOperacion === "transito-aduanero"
+  ) {
+    viaje.domicilioDestinoTerminal =
+      viajesAlmacenados[0].domicilioDestinoTerminal;
+    viaje.nombreDomicilioDestinoTerminal =
+      viajesAlmacenados[0].nombreDomicilioDestinoTerminal;
+  }
+
+  viaje.fantasiaOrigen = viajesAlmacenados[0].fantasiaOrigen;
+  viaje.fantasiaDestino = viajesAlmacenados[0].fantasiaDestino;
+  viaje.tipoServicio = servicio.tipoOperacion;
+  viaje.tipoCarga = servicio.tipoCarga;
+  (viaje.servicio = servicio._id),
+    (viaje.numeroDeViaje = viajesAlmacenados[0].numeroDeViaje + "/BIS"),
+    (viaje.cantidadCarga = servicio.cantidad),
+    (viaje.volumenCarga = servicio.volumen),
+    (viaje.pesoCarga = servicio.peso),
+    (viaje.estadoServicio = servicio.estado),
+    (viaje.notificado = "Sin Notificar"),
+    (viaje.referenciaCliente = servicio.numeroCliente),
+    (viaje.observacionesServicio = servicio.observaciones);
+  viaje.estado = estadoViaje.estado;
+
+  try {
+    const viajeAlmacenado = await viaje.save();
+    console.log(viajeAlmacenado);
+    res.json(viajeAlmacenado);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -2883,4 +2998,5 @@ export {
   completarDevolucion,
   editarConcepto,
   agregarConcepto,
+  agregarViajes,
 };
