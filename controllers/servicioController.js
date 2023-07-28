@@ -1790,7 +1790,7 @@ const viajesAyerSinCerrar = async (req, res) => {
       estado2: { $ne: "eliminado" },
       fechaOrigen: { $lt: fechaHoyString },
     })
-      .sort({ fechaOrigen: -1, horaOrigen: 1, numeroDeViaje: 1 })
+      .sort({ fechaOrigen: -1, horaOrigen: -1, numeroDeViaje: 1 })
       .lean(); // Utilizamos lean() para obtener objetos planos en lugar de documentos de Mongoose
 
     res.json(viajes);
