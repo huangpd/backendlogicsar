@@ -252,6 +252,36 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    numeroFactura: {
+      type: String,
+      trim: true,
+    },
+    PrecioViaje: {
+      type: String,
+      trim: true,
+    },
+    PrecioAdicional: {
+      type: String,
+      trim: true,
+    },
+    PagadoViajeFlete: {
+      type: String,
+      trim: true,
+    },
+    PagadoAdicionalFlete: {
+      type: String,
+      trim: true,
+    },
+    nombrePlaya: {
+      type: String,
+      trim: true,
+    },
+    domicilioPlaya: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Devoluciones",
+      },
+    ],
   },
   {
     timestamps: true,

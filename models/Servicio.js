@@ -83,6 +83,10 @@ const servicioSchema = mongoose.Schema(
       trim: true,
       require: true,
     },
+    playa: {
+      type: String,
+      trim: true,
+    },
 
     numeroContenedores: [
       {

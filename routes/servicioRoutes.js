@@ -53,6 +53,9 @@ import {
   editarConcepto,
   agregarConcepto,
   agregarViajes,
+  obtenerViajesValorizarCliente,
+  nuevaRoundTripExpo,
+  nuevoEmptyPickUp,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -76,6 +79,12 @@ router.get("/obtener-viajes-filtrados", checkAuth, filtrarViajes);
 router.get("/obtener-viajes-hoy/", checkAuth, viajesHoy);
 router.get("/obtener-viajes-ayer/", checkAuth, viajesAyerSinCerrar);
 router.get("/obtener-viajes-futuro/", checkAuth, viajesFuturosSinCerrar);
+
+router.get(
+  "/obtener-viajes-liquidacion-clientes/:id",
+  checkAuth,
+  obtenerViajesValorizarCliente
+);
 
 router.get("/obtener-estados-servicio", checkAuth, obtenerEstadosServicio);
 router.get("/obtener-estados-viaje", checkAuth, obtenerEstadosViaje);
@@ -142,7 +151,11 @@ router.post("/estado-viajes", checkAuth, nuevoEstadoViaje);
 
 router.post("/importacion", checkAuth, nuevoServicioImportacion);
 router.post("/exportacion", checkAuth, nuevoServicioExportacion);
+router.post("/round-trip", checkAuth, nuevaRoundTripExpo);
+
 router.post("/vacios", checkAuth, nuevoServicioDevolucionVacios);
+
+router.post("/empty-pick", checkAuth, nuevoEmptyPickUp);
 
 router.post("/transito", checkAuth, nuevoTransito);
 router.post("/nacional", checkAuth, nuevoServicioNacional);
