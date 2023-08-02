@@ -30,6 +30,8 @@ const nuevoServicioImportacion = async (req, res) => {
   const { numeroContenedores } = req.body;
   const { origenCarga } = req.body;
   const { destinoCarga } = req.body;
+  const { fechaCarga } = req.body;
+  const fechaParaList = new Date(fechaCarga);
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
@@ -39,7 +41,6 @@ const nuevoServicioImportacion = async (req, res) => {
   const estadoServicio = await EstadosServicio.findOne({ numeroEstado: "2" });
 
   const estadoViaje = await EstadosViajes.findOne({ numeroEstado: "1" });
-
   servicio.nombreCliente = cliente.nombre;
   servicio.cliente = idCliente;
   servicio.estado = estadoServicio.estado;
@@ -88,6 +89,7 @@ const nuevoServicioImportacion = async (req, res) => {
         notificado: "Sin Notificar",
         referenciaCliente: servicioalmacenado.numeroCliente,
         observacionesServicio: servicioalmacenado.observaciones,
+        fechaOrigenParaListados: fechaParaList,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -163,6 +165,7 @@ const nuevoServicioImportacion = async (req, res) => {
               notificado: "Sin Notificar",
               referenciaCliente: servicioalmacenado.numeroCliente,
               observacionesServicio: servicioalmacenado.observaciones,
+              fechaOrigenParaListados: fechaParaList,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -261,6 +264,7 @@ const nuevoServicioImportacion = async (req, res) => {
           notificado: "Sin Notificar",
           observacionesServicio: servicioalmacenado.observaciones,
           referenciaCliente: servicioalmacenado.numeroCliente,
+          fechaOrigenParaListados: fechaParaList,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -342,6 +346,8 @@ const nuevoServicioExportacion = async (req, res) => {
   const { destinoCarga } = req.body;
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  const { fechaCarga } = req.body;
+  const fechaParaList = new Date(fechaCarga);
 
   const actualizacion = new Actualizaciones();
 
@@ -398,6 +404,7 @@ const nuevoServicioExportacion = async (req, res) => {
         estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
         observacionesServicio: servicioalmacenado.observaciones,
+        fechaOrigenParaListados: fechaParaList,
 
         referenciaCliente: servicioalmacenado.numeroCliente,
       });
@@ -475,6 +482,7 @@ const nuevoServicioExportacion = async (req, res) => {
               notificado: "Sin Notificar",
               referenciaCliente: servicioalmacenado.numeroCliente,
               observacionesServicio: servicioalmacenado.observaciones,
+              fechaOrigenParaListados: fechaParaList,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -576,6 +584,7 @@ const nuevoServicioExportacion = async (req, res) => {
           observacionesServicio: servicioalmacenado.observaciones,
 
           referenciaCliente: servicioalmacenado.numeroCliente,
+          fechaOrigenParaListados: fechaParaList,
         });
         const viajeAlmacenado = await nuevoViaje.save();
         await cargarDocumentacionARecibir(
@@ -654,6 +663,8 @@ const nuevaRoundTripExpo = async (req, res) => {
   const { destinoCarga } = req.body;
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  const { fechaCarga } = req.body;
+  const fechaParaList = new Date(fechaCarga);
 
   const actualizacion = new Actualizaciones();
 
@@ -715,6 +726,7 @@ const nuevaRoundTripExpo = async (req, res) => {
         referenciaCliente: servicioalmacenado.numeroCliente,
         nombrePlaya: playas.nombre,
         domicilioPlaya: playas._id,
+        fechaOrigenParaListados: fechaParaList,
       });
 
       const viajeAlmacenado = await nuevoViaje.save();
@@ -792,6 +804,7 @@ const nuevaRoundTripExpo = async (req, res) => {
               observacionesServicio: servicioalmacenado.observaciones,
               nombrePlaya: playas.nombre,
               domicilioPlaya: playas._id,
+              fechaOrigenParaListados: fechaParaList,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -891,6 +904,7 @@ const nuevaRoundTripExpo = async (req, res) => {
           estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
           observacionesServicio: servicioalmacenado.observaciones,
+          fechaOrigenParaListados: fechaParaList,
 
           referenciaCliente: servicioalmacenado.numeroCliente,
           nombrePlaya: playas.nombre,
@@ -973,6 +987,8 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
   const { destinoCarga } = req.body;
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  const { fechaCarga } = req.body;
+  const fechaParaList = new Date(fechaCarga);
 
   const actualizacion = new Actualizaciones();
 
@@ -1030,6 +1046,7 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
         estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
         observacionesServicio: servicioalmacenado.observaciones,
+        fechaOrigenParaListados: fechaParaList,
 
         referenciaCliente: servicioalmacenado.numeroCliente,
       });
@@ -1108,6 +1125,7 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
               notificado: "Sin Notificar",
               observacionesServicio: servicioalmacenado.observaciones,
               referenciaCliente: servicioalmacenado.numeroCliente,
+              fechaOrigenParaListados: fechaParaList,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -1207,6 +1225,7 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
           estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
           observacionesServicio: servicioalmacenado.observaciones,
+          fechaOrigenParaListados: fechaParaList,
 
           referenciaCliente: servicioalmacenado.numeroCliente,
         });
@@ -1289,6 +1308,8 @@ const nuevoTransito = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  const { fechaCarga } = req.body;
+  const fechaParaList = new Date(fechaCarga);
 
   const domicilio = await Terminales.findById(origenCarga);
   const destino = await Terminales.findById(destinoCarga);
@@ -1344,6 +1365,7 @@ const nuevoTransito = async (req, res) => {
         estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
         observacionesServicio: servicioalmacenado.observaciones,
+        fechaOrigenParaListados: fechaParaList,
 
         referenciaCliente: servicioalmacenado.numeroCliente,
       });
@@ -1420,6 +1442,7 @@ const nuevoTransito = async (req, res) => {
               estadoServicio: servicioalmacenado.estado,
               notificado: "Sin Notificar",
               observacionesServicio: servicioalmacenado.observaciones,
+              fechaOrigenParaListados: fechaParaList,
 
               referenciaCliente: servicioalmacenado.numeroCliente,
             });
@@ -1520,6 +1543,7 @@ const nuevoTransito = async (req, res) => {
           pesoCarga: servicioalmacenado.peso,
           estadoServicio: servicioalmacenado.estado,
           observacionesServicio: servicioalmacenado.observaciones,
+          fechaOrigenParaListados: fechaParaList,
 
           referenciaCliente: servicioalmacenado.numeroCliente,
         });
@@ -1602,6 +1626,8 @@ const nuevoServicioNacional = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  const { fechaCarga } = req.body;
+  const fechaParaList = new Date(fechaCarga);
 
   const domicilio = await Domicilios.findById(origenCarga);
   const destino = await Domicilios.findById(destinoCarga);
@@ -1657,6 +1683,7 @@ const nuevoServicioNacional = async (req, res) => {
         estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
         observacionesServicio: servicioalmacenado.observaciones,
+        fechaOrigenParaListados: fechaParaList,
 
         referenciaCliente: servicioalmacenado.numeroCliente,
       });
@@ -1733,6 +1760,7 @@ const nuevoServicioNacional = async (req, res) => {
               estadoServicio: servicioalmacenado.estado,
               notificado: "Sin Notificar",
               observacionesServicio: servicioalmacenado.observaciones,
+              fechaOrigenParaListados: fechaParaList,
 
               referenciaCliente: servicioalmacenado.numeroCliente,
             });
@@ -1834,6 +1862,7 @@ const nuevoServicioNacional = async (req, res) => {
           estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
           observacionesServicio: servicioalmacenado.observaciones,
+          fechaOrigenParaListados: fechaParaList,
 
           referenciaCliente: servicioalmacenado.numeroCliente,
         });
@@ -1914,6 +1943,8 @@ const nuevoEmptyPickUp = async (req, res) => {
   const { destinoCarga } = req.body;
   const cliente = await Cliente.findById(idCliente);
   const servicio = new Servicio(req.body);
+  const { fechaCarga } = req.body;
+  const fechaParaList = new Date(fechaCarga);
 
   const actualizacion = new Actualizaciones();
 
@@ -1971,6 +2002,7 @@ const nuevoEmptyPickUp = async (req, res) => {
         estadoServicio: servicioalmacenado.estado,
         notificado: "Sin Notificar",
         observacionesServicio: servicioalmacenado.observaciones,
+        fechaOrigenParaListados: fechaParaList,
 
         referenciaCliente: servicioalmacenado.numeroCliente,
       });
@@ -2049,6 +2081,7 @@ const nuevoEmptyPickUp = async (req, res) => {
               notificado: "Sin Notificar",
               observacionesServicio: servicioalmacenado.observaciones,
               referenciaCliente: servicioalmacenado.numeroCliente,
+              fechaOrigenParaListados: fechaParaList,
             });
 
             const viajeAlmacenado = await nuevoViaje.save();
@@ -2148,6 +2181,7 @@ const nuevoEmptyPickUp = async (req, res) => {
           estadoServicio: servicioalmacenado.estado,
           notificado: "Sin Notificar",
           observacionesServicio: servicioalmacenado.observaciones,
+          fechaOrigenParaListados: fechaParaList,
 
           referenciaCliente: servicioalmacenado.numeroCliente,
         });
@@ -3583,13 +3617,44 @@ const agregarViajes = async (req, res) => {
 
 const obtenerViajesValorizarCliente = async (req, res) => {
   const { id } = req.params;
+  const { fecha } = req.query;
+  console.log(fecha);
+
+  // Crear un objeto Date a partir de la fecha proporcionada
+  const fechaObj = new Date(fecha);
+
+  // Crear las fechas de inicio y finalización del mes
+  const primerDiaDelMes = new Date(
+    fechaObj.getFullYear(),
+    fechaObj.getMonth(),
+    1
+  );
+  const ultimoDiaDelMes = new Date(
+    fechaObj.getFullYear(),
+    fechaObj.getMonth() + 1,
+    0
+  );
+
+  console.log(`Primer día del mes: ${primerDiaDelMes}`);
+  console.log(`Último día del mes: ${ultimoDiaDelMes}`);
 
   const viajesCliente = await Viajes.find({
     cliente: id,
+    fechaOrigenParaListados: { $gte: primerDiaDelMes, $lte: ultimoDiaDelMes },
     $or: [
       { PrecioViaje: { $in: [null, ""] } },
       { PrecioAdicional: { $in: [null, ""] } },
     ],
+  });
+
+  res.json(viajesCliente);
+};
+
+const obtenerTodosLosViajesPorValorizarPorCliente = async (req, res) => {
+  const viajesCliente = await Viajes.find({
+    numeroFactura: { $in: [null, ""] },
+  }).sort({
+    PrecioViaje: 1, // Esto ordenará los documentos de tal manera que aquellos con PrecioViaje nulo o cadena vacía aparecerán primero
   });
 
   res.json(viajesCliente);
@@ -3649,4 +3714,5 @@ export {
   obtenerViajesValorizarCliente,
   nuevaRoundTripExpo,
   nuevoEmptyPickUp,
+  obtenerTodosLosViajesPorValorizarPorCliente,
 };

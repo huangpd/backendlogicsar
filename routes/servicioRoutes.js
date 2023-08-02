@@ -56,6 +56,7 @@ import {
   obtenerViajesValorizarCliente,
   nuevaRoundTripExpo,
   nuevoEmptyPickUp,
+  obtenerTodosLosViajesPorValorizarPorCliente,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -64,6 +65,12 @@ router.get("/", checkAuth, obtenerServicios);
 router.get("/hoy", checkAuth, obtenerServiciosHoy);
 router.get("/manana", checkAuth, obtenerServiciosManana);
 router.get("/todos-servicios", checkAuth, obtenerTodosLosServicios);
+
+router.get(
+  "/obtener-todos-los-viajes-por-valorizar-por-clientes",
+  checkAuth,
+  obtenerTodosLosViajesPorValorizarPorCliente
+);
 
 router.get("/obtener-viajes/:id", checkAuth, obtenerViajesServicio);
 

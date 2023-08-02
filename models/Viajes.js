@@ -71,6 +71,9 @@ const viajesSchema = mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
+    fechaOrigenParaListados: {
+      type: Date,
+    },
     horaOrigen: {
       type: String,
       trim: true,
@@ -273,6 +276,14 @@ const viajesSchema = mongoose.Schema(
       trim: true,
     },
     nombrePlaya: {
+      type: String,
+      trim: true,
+    },
+    importePagado: {
+      type: String,
+      trim: true,
+    },
+    AdicionalPagado: {
       type: String,
       trim: true,
     },
