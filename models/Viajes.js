@@ -63,6 +63,10 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    estadoDocumentacion: {
+      type: String,
+      trim: true,
+    },
     fechaOrigen: {
       type: String,
       trim: true,
@@ -259,19 +263,19 @@ const viajesSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    PrecioViaje: {
+    precioViaje: {
       type: String,
       trim: true,
     },
-    PrecioAdicional: {
+    precioAdicional: {
       type: String,
       trim: true,
     },
-    PagadoViajeFlete: {
+    pagadoViajeFlete: {
       type: String,
       trim: true,
     },
-    PagadoAdicionalFlete: {
+    pagadoAdicionalFlete: {
       type: String,
       trim: true,
     },

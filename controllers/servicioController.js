@@ -3416,6 +3416,17 @@ const editarDocumento = async (req, res) => {
     req.body.numeroDocumentacion || documento.numeroDocumentacion;
   documento.linkDocumento = req.body.linkDocumento || documento.linkDocumento;
   documento.estado = req.body.estado || documento.estado;
+  console.log(req.body.estado);
+  if (
+    req.body.estado === "Solo Fisico" ||
+    req.body.estado === "Fisico y Virtual"
+  ) {
+    const viaje = await Viajes.findById(documento.viaje);
+    viaje.estadoDocumentacion = "entregado";
+    const viajeAlmacenado = await viaje.save();
+
+    console.log(viajeAlmacenado);
+  }
 
   try {
     actualizacion.icon = "PaperClipIcon";
@@ -3635,9 +3646,6 @@ const obtenerViajesValorizarCliente = async (req, res) => {
     0
   );
 
-  console.log(`Primer día del mes: ${primerDiaDelMes}`);
-  console.log(`Último día del mes: ${ultimoDiaDelMes}`);
-
   const viajesCliente = await Viajes.find({
     cliente: id,
     fechaOrigenParaListados: { $gte: primerDiaDelMes, $lte: ultimoDiaDelMes },
@@ -3646,7 +3654,7 @@ const obtenerViajesValorizarCliente = async (req, res) => {
       { PrecioAdicional: { $in: [null, ""] } },
     ],
   });
-
+  console.log(viajesCliente);
   res.json(viajesCliente);
 };
 
@@ -3658,6 +3666,36 @@ const obtenerTodosLosViajesPorValorizarPorCliente = async (req, res) => {
   });
 
   res.json(viajesCliente);
+};
+
+const actualizarPrecioViajesDesdeClientes = async (req, res) => {
+  const { id } = req.params;
+  const { precio } = req.body;
+
+  console.log(precio);
+
+  const viaje = await Viajes.findById(id);
+
+  viaje.precioViaje = precio;
+
+  await viaje.save();
+
+  res.json({ msg: "ok!" });
+};
+
+const actualizarAdicionalCliente = async (req, res) => {
+  const { id } = req.params;
+  const { precio } = req.body;
+
+  console.log(precio);
+
+  const viaje = await Viajes.findById(id);
+
+  viaje.precioAdicional = precio;
+
+  await viaje.save();
+
+  res.json({ msg: "ok!" });
 };
 
 export {
@@ -3715,4 +3753,6 @@ export {
   nuevaRoundTripExpo,
   nuevoEmptyPickUp,
   obtenerTodosLosViajesPorValorizarPorCliente,
+  actualizarPrecioViajesDesdeClientes,
+  actualizarAdicionalCliente,
 };

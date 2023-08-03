@@ -57,6 +57,8 @@ import {
   nuevaRoundTripExpo,
   nuevoEmptyPickUp,
   obtenerTodosLosViajesPorValorizarPorCliente,
+  actualizarPrecioViajesDesdeClientes,
+  actualizarAdicionalCliente,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -115,6 +117,18 @@ router.post("/asignar-proveedor/:id", checkAuth, asignarProveedor);
 router.post("/aceptar-servicio/:id", checkAuth, aceptarServicio);
 
 router.post("/reasignar-proveedor/:id", checkAuth, reasignarProveedor);
+
+router.post(
+  "/cambiar-precio-viaje-cliente/:id",
+  checkAuth,
+  actualizarPrecioViajesDesdeClientes
+);
+
+router.post(
+  "/cambiar-precio-adicional-cliente/:id",
+  checkAuth,
+  actualizarAdicionalCliente
+);
 
 router.post(
   "/cambiar-estado-servicio/:id",
