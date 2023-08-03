@@ -2976,7 +2976,7 @@ const editarViaje = async (req, res) => {
   const { id } = req.params;
   const { tipoServicio } = req.body;
 
-  console.log(req.body.observaciones);
+  console.log(req.body);
 
   const viaje = await Viajes.findById(id);
   const documentacion = await Documentacion.find({ viaje: id });
@@ -2999,7 +2999,7 @@ const editarViaje = async (req, res) => {
   viaje.cantidadCarga = req.body.cantidadCarga || viaje.cantidadCarga;
   viaje.tipoCarga = req.body.tipoCarga || viaje.tipoCarga;
 
-  if (tipoServicio == "importacion") {
+  if (tipoServicio === "importacion") {
     const origen = await Terminales.findById(req.body.domicilioOrigen);
     const destino = await Domicilios.findById(req.body.domicilioDestino);
 
@@ -3011,9 +3011,12 @@ const editarViaje = async (req, res) => {
 
     viaje.nombreDomicilioOrigenTerminal = origen.direccion;
     viaje.nombreDomicilioDestinoCliente = destino.direccion;
+
+    viaje.fantasiaOrigen = origen.nombre;
+    viaje.fantasiaDestino = destino.fantasia;
   }
 
-  if (tipoServicio == "one-way") {
+  if (tipoServicio === "one-way") {
     const origen = await Domicilios.findById(req.body.domicilioOrigen);
     const destino = await Terminales.findById(req.body.domicilioDestino);
 
@@ -3025,9 +3028,12 @@ const editarViaje = async (req, res) => {
 
     viaje.nombreDomicilioOrigenCliente = origen.direccion;
     viaje.nombreDomicilioDestinoTerminal = destino.direccion;
+
+    viaje.fantasiaOrigen = origen.fantasia;
+    viaje.fantasiaDestino = destino.nombre;
   }
 
-  if (tipoServicio == "transito-aduanero") {
+  if (tipoServicio === "transito-aduanero") {
     const origen = await Terminales.findById(req.body.domicilioOrigen);
     const destino = await Terminales.findById(req.body.domicilioDestino);
 
@@ -3038,9 +3044,12 @@ const editarViaje = async (req, res) => {
 
     viaje.nombreDomicilioOrigenTerminal = origen.direccion;
     viaje.nombreDomicilioDestinoTerminal = destino.direccion;
+
+    viaje.fantasiaOrigen = origen.nombre;
+    viaje.fantasiaDestino = destino.nombre;
   }
 
-  if (tipoServicio == "nacional") {
+  if (tipoServicio === "nacional") {
     const origen = await Domicilios.findById(req.body.domicilioOrigen);
     const destino = await Domicilios.findById(req.body.domicilioDestino);
 
@@ -3051,6 +3060,54 @@ const editarViaje = async (req, res) => {
 
     viaje.nombreDomicilioOrigenCliente = origen.direccion;
     viaje.nombreDomicilioDestinoCliente = destino.direccion;
+
+    viaje.fantasiaOrigen = origen.nombre;
+    viaje.fantasiaDestino = destino.nombre;
+  }
+  if (tipoServicio === "round-trip") {
+    const origen = await Domicilios.findById(req.body.domicilioOrigen);
+    const destino = await Terminales.findById(req.body.domicilioDestino);
+
+    viaje.domicilioOrigenCliente =
+      req.body.domicilioOrigen || viaje.domicilioOrigenCliente;
+    viaje.nombreDomicilioDestinoCliente =
+      req.body.domicilioDestino || viaje.nombreDomicilioDestinoCliente;
+
+    viaje.nombreDomicilioOrigenCliente = origen.direccion;
+    viaje.nombreDomicilioDestinoCliente = destino.direccion;
+
+    viaje.fantasiaOrigen = origen.fantasia;
+    viaje.fantasiaDestino = destino.nombre;
+  }
+  if (tipoServicio === "vacios") {
+    const origen = await Domicilios.findById(req.body.domicilioOrigen);
+    const destino = await Devoluciones.findById(req.body.domicilioDestino);
+
+    viaje.domicilioOrigenCliente =
+      req.body.domicilioOrigen || viaje.domicilioOrigenCliente;
+    viaje.nombreDomicilioDestinoCliente =
+      req.body.domicilioDestino || viaje.nombreDomicilioDestinoCliente;
+
+    viaje.nombreDomicilioOrigenCliente = origen.direccion;
+    viaje.nombreDomicilioDestinoCliente = destino.direccion;
+
+    viaje.fantasiaOrigen = origen.nombre;
+    viaje.fantasiaDestino = destino.nombre;
+  }
+  if (tipoServicio === "empty-pick") {
+    const origen = await Devoluciones.findById(req.body.domicilioOrigen);
+    const destino = await Domicilios.findById(req.body.domicilioDestino);
+
+    viaje.domicilioOrigenCliente =
+      req.body.domicilioOrigen || viaje.domicilioOrigenCliente;
+    viaje.nombreDomicilioDestinoCliente =
+      req.body.domicilioDestino || viaje.nombreDomicilioDestinoCliente;
+
+    viaje.nombreDomicilioOrigenCliente = origen.direccion;
+    viaje.nombreDomicilioDestinoCliente = destino.direccion;
+
+    viaje.fantasiaOrigen = origen.nombre;
+    viaje.fantasiaDestino = destino.fantasia;
   }
 
   try {
@@ -3069,6 +3126,7 @@ const editarViaje = async (req, res) => {
 
     await documentacion[0].save();
 
+    console.log(viajeAlmacenado);
     res.json(viajeAlmacenado);
   } catch (error) {
     console.log(error);
