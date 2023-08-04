@@ -18,6 +18,7 @@ import {
   obtenerDomicilios,
   obtenerDireccionTerminales,
   obtenerDireccionDevoluciones,
+  editarDomicilio,
 } from "../controllers/clientesController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -34,6 +35,8 @@ router.get("/buscar-prueba2/:id", checkAuth, obtenerUsuariosProfile2);
 //Agregar los planes a los clientes
 
 router.post("/nuevoDomicilio/:id", checkAuth, nuevoDomicilio);
+
+router.post("/editar-domicilio/:id", checkAuth, editarDomicilio);
 
 router.post("/adicional", checkAuth, adicional);
 

@@ -93,6 +93,25 @@ const nuevoDomicilio = async (req, res) => {
   }
 };
 
+const editarDomicilio = async (req, res) => {
+  const { id } = req.params;
+
+  const domicilio = await Domicilios.findById(id);
+
+  domicilio.fantasia = req.body.fantasia || domicilio.fantasia;
+  domicilio.direccion = req.body.direccion || domicilio.direccion;
+  domicilio.localidad = req.body.localidad || domicilio.localidad;
+  domicilio.provincia = req.body.provincia || domicilio.provincia;
+
+  try {
+    const domicilioAlmacenado = await domicilio.save();
+
+    res.json(domicilioAlmacenado);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const obtenerDomicilios = async (req, res) => {
   const { id } = req.params;
 
@@ -240,4 +259,5 @@ export {
   obtenerUsuariosProfile2,
   obtenerDomicilios,
   obtenerDireccionDevoluciones,
+  editarDomicilio,
 };

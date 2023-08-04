@@ -24,6 +24,8 @@ import Usuario from "../models/Usuario.js";
 import Actualizaciones from "../models/UltimasActualizaciones.js";
 import Documentacion from "../models/Documentacion.js";
 import ConceptosAFActurar from "../models/ConceptosAFActurar.js";
+import { grabarEnExcel } from "../helpers/grabarNumeroFActura.js";
+import { faPieChart, faLineChart } from "@fortawesome/free-solid-svg-icons";
 
 const nuevoServicioImportacion = async (req, res) => {
   const { idCliente } = req.body;
@@ -1987,13 +1989,13 @@ const nuevoEmptyPickUp = async (req, res) => {
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
         nombreDomicilioOrigenCliente: domicilio.direccion,
-        fantasiaOrigen: domicilio.fantasia,
+        fantasiaOrigen: domicilio.nombre,
         fantasiaDestino: destino.nombre,
-        domicilioDestinoTerminal: destinoCarga,
+        domicilioDestinoCliente: destinoCarga,
         estado: estadoViaje.estado,
         tipoServicio: servicioalmacenado.tipoOperacion,
         tipoCarga: servicioalmacenado.tipoCarga,
-        nombreDomicilioDestinoTerminal: destino.direccion,
+        nombreDomicilioDestinoCliente: destino.direccion,
         servicio: servicioalmacenado._id,
         numeroDeViaje: `${servicioalmacenado.numeroPedido}/1`,
         cantidadCarga: servicioalmacenado.cantidad,
@@ -2064,14 +2066,14 @@ const nuevoEmptyPickUp = async (req, res) => {
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
-              fantasiaOrigen: domicilio.fantasia,
+              fantasiaOrigen: domicilio.nombre,
               fantasiaDestino: destino.nombre,
               nombreDomicilioOrigenCliente: domicilio.direccion,
-              domicilioDestinoTerminal: destinoCarga,
+              domicilioDestinoCliente: destinoCarga,
               estado: estadoViaje.estado,
               tipoServicio: servicioalmacenado.tipoOperacion,
               tipoCarga: servicioalmacenado.tipoCarga,
-              nombreDomicilioDestinoTerminal: destino.direccion,
+              nombreDomicilioDestinoCliente: destino.direccion,
               servicio: servicioalmacenado._id,
               numeroDeViaje: `${servicioalmacenado.numeroPedido}/${index + 1}`,
               cantidadCarga: servicioalmacenado.cantidad,
@@ -2166,11 +2168,11 @@ const nuevoEmptyPickUp = async (req, res) => {
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
-          fantasiaOrigen: domicilio.fantasia,
+          fantasiaOrigen: domicilio.nombre,
           fantasiaDestino: destino.nombre,
           nombreDomicilioOrigenCliente: domicilio.direccion,
-          domicilioDestinoTerminal: destinoCarga,
-          nombreDomicilioDestinoTerminal: destino.direccion,
+          domicilioDestinoCliente: destinoCarga,
+          nombreDomicilioDestinoCliente: destino.direccion,
           servicio: servicioalmacenado._id,
           tipoServicio: servicioalmacenado.tipoOperacion,
           tipoCarga: servicioalmacenado.tipoCarga,
@@ -2384,13 +2386,29 @@ const obtenerServicio = async (req, res) => {
   res.json(servicio);
 };
 
-const obtenerTodosLosServicios = async (req, res) => {
+const obtenerTodosLosServiciosAFacturar = async (req, res) => {
   try {
     const servicios = await Servicio.find({
       estado: "Por Facturar",
       estado2: { $ne: "eliminado" },
     });
     console.log(servicios);
+    res.json(servicios);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Ocurrió un error al obtener los servicios" });
+  }
+};
+
+const obtenerTodosLosServicios = async (req, res) => {
+  try {
+    const servicios = await Servicio.find({
+      estado: { $ne: "Terminado" },
+      estado2: { $ne: "eliminado" },
+    });
+
     res.json(servicios);
   } catch (error) {
     console.error(error);
@@ -2588,14 +2606,12 @@ const asignarEquipo = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const servicio = await Servicio.findById(viaje.servicio);
 
+  const viajesServicio = await Viajes.find({ servicio: servicio._id });
+
   const documentacion = await Documentacion.find({ viaje: id });
 
   const chofer = await Choferes.findById(idChofer);
   const camion = await Camiones.findById(idCamion);
-
-  const viajesFiltrados = await Viajes.find({ servicio: viaje.servicio });
-
-  console.log(viajesFiltrados);
 
   if (idSemi !== "") {
     const semi = await Semis.findById(idSemi);
@@ -2612,6 +2628,20 @@ const asignarEquipo = async (req, res) => {
 
   viaje.estado = estadoViaje.estado;
 
+  if (viaje.estado === "Por Asignar") {
+    viaje.estado = "Asignado";
+  }
+
+  if (viajesServicio.length == 1) {
+    servicio.estado = "Coordinado";
+  } else if (
+    viajesServicio.every(
+      (viaje) => viaje.nombreChofer && viaje.nombreChofer.trim() !== ""
+    )
+  ) {
+    servicio.estado = "Coordinado";
+  }
+
   actualizacion.icon = "TruckIcon";
   actualizacion.description = Date.now();
   actualizacion.color = "text-gray-300";
@@ -2627,7 +2657,7 @@ const asignarEquipo = async (req, res) => {
     }
 
     await documentacion[0].save();
-
+    await servicio.save();
     await actualizacion.save();
     res.json(viajeAlmacenado);
   } catch (error) {
@@ -2829,19 +2859,6 @@ const actualizarEstadoServicio = async (req, res) => {
 
       const estadoAlmacenado = await servicio.save();
 
-      // Iterar sobre los viajes asociados al servicio y actualizar estadoServicio
-      const viajes = await Viajes.find({ servicio: servicio._id });
-      if (viajes.length > 1) {
-        for (const viaje of viajes) {
-          viaje.estadoServicio = estadoAlmacenado.estado;
-          await viaje.save();
-        }
-      }
-      if (viajes.length == 1) {
-        viajes[0].estadoServicio = estadoAlmacenado.estado;
-        await viajes[0].save();
-      }
-
       await actualizacion.save();
       res.json(estadoAlmacenado);
     } catch (error) {
@@ -2920,8 +2937,10 @@ const obtenerEstadosViaje = async (req, res) => {
 
 const filtrarViajes = async (req, res) => {
   const { cliente, fecha, estado } = req.body;
+  console.log(req.body);
   let filtro = {};
 
+  //Busca primero si solo le pasaste por cliente
   if (cliente) {
     if (fecha) {
       if (estado) {
@@ -2963,9 +2982,94 @@ const filtrarViajes = async (req, res) => {
     };
   }
 
+  //Busca si solo le pasaste por estado
+  if (estado) {
+    if (cliente) {
+      if (fecha) {
+        filtro = {
+          estado: { $eq: estado },
+          cliente: { $eq: cliente },
+          fechaOrigen: { $eq: fecha },
+        };
+      } else {
+        filtro = {
+          estado: { $eq: estado },
+          cliente: { $eq: cliente },
+        };
+      }
+    } else if (fecha) {
+      filtro = {
+        estado: { $eq: estado },
+        fechaOrigen: { $eq: fecha },
+      };
+    } else {
+      filtro = {
+        estado: { $eq: estado },
+      };
+    }
+  } else if (cliente) {
+    if (fecha) {
+      filtro = {
+        cliente: { $eq: cliente },
+        fechaOrigen: { $eq: fecha },
+      };
+    } else {
+      filtro = {
+        cliente: { $eq: cliente },
+      };
+    }
+  } else if (fecha) {
+    filtro = {
+      fechaOrigen: { $eq: fecha },
+    };
+  }
+
+  //Busca si solo le pasaste por fecha
+  if (fecha) {
+    if (cliente) {
+      if (estado) {
+        filtro = {
+          fechaOrigen: { $eq: fecha },
+          cliente: { $eq: cliente },
+          estado: { $eq: estado },
+        };
+      } else {
+        filtro = {
+          fechaOrigen: { $eq: fecha },
+          cliente: { $eq: cliente },
+        };
+      }
+    } else if (estado) {
+      filtro = {
+        fechaOrigen: { $eq: fecha },
+        estado: { $eq: estado },
+      };
+    } else {
+      filtro = {
+        fechaOrigen: { $eq: fecha },
+      };
+    }
+  } else if (cliente) {
+    if (estado) {
+      filtro = {
+        cliente: { $eq: cliente },
+        estado: { $eq: estado },
+      };
+    } else {
+      filtro = {
+        cliente: { $eq: cliente },
+      };
+    }
+  } else if (estado) {
+    filtro = {
+      estado: { $eq: estado },
+    };
+  }
+
   try {
     const viajesFiltrados = await Viajes.find(filtro);
 
+    console.log(viajesFiltrados);
     res.json(viajesFiltrados);
   } catch (error) {
     res.status(500).json({ error: "Error al filtrar los viajes" });
@@ -2975,8 +3079,6 @@ const filtrarViajes = async (req, res) => {
 const editarViaje = async (req, res) => {
   const { id } = req.params;
   const { tipoServicio } = req.body;
-
-  console.log(req.body);
 
   const viaje = await Viajes.findById(id);
   const documentacion = await Documentacion.find({ viaje: id });
@@ -3756,6 +3858,37 @@ const actualizarAdicionalCliente = async (req, res) => {
   res.json({ msg: "ok!" });
 };
 
+const actualizarNumeroFacturaDesdeClientes = async (req, res) => {
+  const { id } = req.params;
+  const { numero } = req.body;
+
+  const viaje = await Viajes.findById(id);
+  const servicio = await Servicio.findById(viaje.servicio);
+
+  const viajesFiltrados = await Viajes.find({ servicio: viaje.servicio });
+
+  viaje.numeroFactura = numero;
+
+  await grabarEnExcel({ numero });
+
+  if (viajesFiltrados.length == 1) {
+    servicio.estado = "Terminado";
+  } else if (
+    viajesFiltrados.every(
+      (viaje) => viaje.nombreChofer && viaje.nombreChofer.trim() !== ""
+    )
+  ) {
+    servicio.estado = "Terminado";
+  }
+
+  await viaje.save();
+  await servicio.save();
+
+  res.json({ msg: "ok!" });
+};
+
+const filtrarViajesModal = async (req, res) => {};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -3813,4 +3946,6 @@ export {
   obtenerTodosLosViajesPorValorizarPorCliente,
   actualizarPrecioViajesDesdeClientes,
   actualizarAdicionalCliente,
+  obtenerTodosLosServiciosAFacturar,
+  actualizarNumeroFacturaDesdeClientes,
 };

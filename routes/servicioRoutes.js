@@ -59,6 +59,8 @@ import {
   obtenerTodosLosViajesPorValorizarPorCliente,
   actualizarPrecioViajesDesdeClientes,
   actualizarAdicionalCliente,
+  obtenerTodosLosServiciosAFacturar,
+  actualizarNumeroFacturaDesdeClientes,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -66,7 +68,9 @@ import checkAuth from "../middleware/checkAuth.js";
 router.get("/", checkAuth, obtenerServicios);
 router.get("/hoy", checkAuth, obtenerServiciosHoy);
 router.get("/manana", checkAuth, obtenerServiciosManana);
-router.get("/todos-servicios", checkAuth, obtenerTodosLosServicios);
+router.get("/todos-servicios", checkAuth, obtenerTodosLosServiciosAFacturar);
+
+router.get("/todos-servicios-en-curso", checkAuth, obtenerTodosLosServicios);
 
 router.get(
   "/obtener-todos-los-viajes-por-valorizar-por-clientes",
@@ -83,7 +87,7 @@ router.get("/obtener-documentacion/:id", checkAuth, obtenerDocumentacion);
 router.get("/obtener-viajes-sin-notificar", checkAuth, obtenerSinNotificar);
 
 router.get("/obtener-actualizaciones", checkAuth, obtenerActualizaciones);
-router.get("/obtener-viajes-filtrados", checkAuth, filtrarViajes);
+router.post("/obtener-viajes-filtrados", checkAuth, filtrarViajes);
 
 router.get("/obtener-viajes-hoy/", checkAuth, viajesHoy);
 router.get("/obtener-viajes-ayer/", checkAuth, viajesAyerSinCerrar);
@@ -122,6 +126,12 @@ router.post(
   "/cambiar-precio-viaje-cliente/:id",
   checkAuth,
   actualizarPrecioViajesDesdeClientes
+);
+
+router.post(
+  "/cambiar-numero-factura-viaje/:id",
+  checkAuth,
+  actualizarNumeroFacturaDesdeClientes
 );
 
 router.post(
