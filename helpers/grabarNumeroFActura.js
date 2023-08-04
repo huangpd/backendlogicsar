@@ -1,5 +1,8 @@
 import { google } from "googleapis";
 import keys from "../carryon-392712-4ac84298d1b2.json" assert { type: "json" };
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const client = new google.auth.JWT(keys.client_email, null, keys.private_key, [
   "https://www.googleapis.com/auth/spreadsheets",
@@ -22,7 +25,7 @@ async function gsrun(cl, data) {
 
   // Define the spreadsheet and range to read from.
   let readOptions = {
-    spreadsheetId: "1YtZ2CMJAHPKvjUdoGAkcYkEJUmBDEFPO4Gmfi-Td4Q4",
+    spreadsheetId: process.env.URL_FACTURA,
     range: "Sheet1!B:B", // read all data in column B
   };
 
@@ -36,7 +39,7 @@ async function gsrun(cl, data) {
 
   // Define the spreadsheet and range to write to.
   let writeOptions = {
-    spreadsheetId: "1YtZ2CMJAHPKvjUdoGAkcYkEJUmBDEFPO4Gmfi-Td4Q4",
+    spreadsheetId: process.env.URL_FACTURA,
     range: `Sheet1!B${nextRow}`, // write to the next row in column B
     valueInputOption: "USER_ENTERED",
     resource: { values: [[data.numero]] },
