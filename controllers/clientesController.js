@@ -10,8 +10,12 @@ import Devoluciones from "../models/DevolucionContenedores.js";
 import Actualizaciones from "../models/UltimasActualizaciones.js";
 
 const obtenerClientes = async (req, res) => {
-  const clientes = await Cliente.find();
-  res.json(clientes);
+  try {
+    const clientes = await Cliente.find().sort({ nombre: 1 }); // 1 para orden ascendente
+    res.json(clientes);
+  } catch (error) {
+    res.status(500).send("Error al obtener clientes");
+  }
 };
 
 const obtenerUsuario = async (req, res) => {

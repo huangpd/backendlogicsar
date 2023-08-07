@@ -2846,12 +2846,20 @@ const actualizarEstadoServicio = async (req, res) => {
   const actualizacion = new Actualizaciones();
   const servicio = await Servicio.findById(id);
 
+  const viajesAsociados = await Viajes.find({ servicio: id });
+
   if (servicio.estado === estado) {
     const error = new Error("Selecciona un estado distinto al ya guardado");
     return res.status(400).json({ msg: error.message });
   } else {
     servicio.estado = estado;
     try {
+      // Actualizar estadoServicio para cada viaje asociado
+      for (let viaje of viajesAsociados) {
+        viaje.estadoServicio = estado;
+        await viaje.save(); // Guardar los cambios en cada viaje
+      }
+
       actualizacion.icon = "ArrowPathIcon";
       actualizacion.description = Date.now();
       actualizacion.color = "text-red-300";
@@ -2863,6 +2871,7 @@ const actualizarEstadoServicio = async (req, res) => {
       res.json(estadoAlmacenado);
     } catch (error) {
       console.log(error);
+      return res.status(500).json({ msg: "Error interno del servidor" });
     }
   }
 };
