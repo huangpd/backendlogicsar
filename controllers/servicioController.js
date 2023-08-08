@@ -3818,6 +3818,7 @@ const obtenerViajesValorizarCliente = async (req, res) => {
   const viajesCliente = await Viajes.find({
     cliente: id,
     fechaOrigenParaListados: { $gte: primerDiaDelMes, $lte: ultimoDiaDelMes },
+    estado2: { $ne: "eliminado" }, // Asegurarte de que estadoServicio no sea "Eliminado"
     $or: [
       { PrecioViaje: { $in: [null, ""] } },
       { PrecioAdicional: { $in: [null, ""] } },
@@ -3830,6 +3831,7 @@ const obtenerViajesValorizarCliente = async (req, res) => {
 const obtenerTodosLosViajesPorValorizarPorCliente = async (req, res) => {
   const viajesCliente = await Viajes.find({
     numeroFactura: { $in: [null, ""] },
+    estado2: { $ne: "eliminado" }, // Asegurarte de que estadoServicio no sea "Eliminado"
   }).sort({
     PrecioViaje: 1, // Esto ordenará los documentos de tal manera que aquellos con PrecioViaje nulo o cadena vacía aparecerán primero
   });
