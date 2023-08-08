@@ -61,6 +61,7 @@ import {
   actualizarAdicionalCliente,
   obtenerTodosLosServiciosAFacturar,
   actualizarNumeroFacturaDesdeClientes,
+  completarDevolucionListado,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -162,6 +163,12 @@ router.post("/editar-viaje/:id", checkAuth, editarViaje);
 router.post("/editar-concepto/:id", checkAuth, editarConcepto);
 
 router.post("/completar-devolucion/:id", checkAuth, completarDevolucion);
+
+router.post(
+  "/completar-devolucion-listado/:id",
+  checkAuth,
+  completarDevolucionListado
+);
 
 router.post("/editar-documento/:id", checkAuth, editarDocumento);
 

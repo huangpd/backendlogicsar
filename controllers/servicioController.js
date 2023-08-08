@@ -3324,11 +3324,19 @@ const actualizarObservacionesServicio = async (req, res) => {
   const { id } = req.params;
   const { observaciones } = req.body;
 
+  // Encuentra y actualiza las observaciones del Servicio
   const servicio = await Servicio.findById(id);
-
   servicio.observaciones = observaciones;
-
   await servicio.save();
+
+  // Encuentra todos los viajes relacionados con el servicio
+  const viajesServicio = await Viajes.find({ servicio: id });
+
+  // Actualiza el campo estadoServicio de cada viaje relacionado con el valor de observaciones
+  for (let viaje of viajesServicio) {
+    viaje.observacionesServicio = observaciones;
+    await viaje.save();
+  }
 
   res.json({ msg: "ok" });
 };
@@ -3676,6 +3684,23 @@ const completarDevolucion = async (req, res) => {
   res.json({ msg: "ok" });
 };
 
+const completarDevolucionListado = async (req, res) => {
+  const { id } = req.params;
+
+  const viaje = await Viajes.findById(id);
+
+  viaje.numeroContenedor = req.body.numeroContenedor || viaje.numeroContenedor;
+  viaje.fechaDevolucion = req.body.fechaDevolucion || viaje.fechaDevolucion;
+  viaje.horaDevolucion = req.body.horaDevolucion || viaje.horaDevolucion;
+  viaje.fechaVencimientoDevolucion =
+    req.body.fechaVencimientoDevolucion || viaje.fechaVencimientoDevolucion;
+  viaje.lugarDevolucion = req.body.lugarDevolucion || viaje.lugarDevolucion;
+
+  await viaje.save();
+
+  res.json({ msg: "ok" });
+};
+
 const editarConcepto = async (req, res) => {
   const { id } = req.params;
 
@@ -3959,4 +3984,5 @@ export {
   actualizarAdicionalCliente,
   obtenerTodosLosServiciosAFacturar,
   actualizarNumeroFacturaDesdeClientes,
+  completarDevolucionListado,
 };
