@@ -1814,11 +1814,11 @@ const nuevoServicioNacional = async (req, res) => {
           }`,
           descripcion2: `Ref: ${servicioalmacenado.numeroCliente}`,
           descripcion3: `${servicioalmacenado.despachoAduana}`,
-          descripcion4: `Contenedor: ${viajeAlmacenado.numeroContenedor}`,
+
           descripcion5: `Pedido Logicsar ${servicioalmacenado.numeroPedido}`,
         };
         await cargarConceptosAFacturar(
-          viajeAlmacenado.fechaOrigen,
+          "",
           cliente._id,
           cliente.nombre,
           conceptos,
