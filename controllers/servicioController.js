@@ -2465,15 +2465,18 @@ const viajesAyerSinCerrar = async (req, res) => {
     // Obtener la fecha de hoy con la hora actual
     const fechaHoy = new Date();
 
-    // Establecer la hora de fechaHoy a las 00:00:00 para incluir solo la fecha
-    fechaHoy.setHours(0, 0, 0, 0);
-    const fechaHoyString = fechaHoy.toISOString().split("T")[0];
+    // Obtener la fecha de inicio y fin para el día de ayer
+    const fechaInicioAyer = new Date(fechaHoy);
+    fechaInicioAyer.setDate(fechaHoy.getDate() - 1);
+    fechaInicioAyer.setHours(0, 0, 0, 0);
 
-    // Realizar la búsqueda en la base de datos filtrando por la fecha anterior a hoy y estado no cerrado,
+    const fechaFinAyer = new Date(fechaInicioAyer);
+    fechaFinAyer.setHours(23, 59, 59, 999);
+
+    // Realizar la búsqueda en la base de datos filtrando por el día de ayer,
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana, y horaOrigen y numeroDeViaje
     const viajes = await Viajes.find({
-      estado2: { $ne: "eliminado" },
-      fechaOrigen: { $lt: fechaHoyString },
+      fechaOrigen: { $gte: fechaInicioAyer, $lte: fechaFinAyer },
     })
       .sort({ fechaOrigen: -1, horaOrigen: -1, numeroDeViaje: 1 })
       .lean(); // Utilizamos lean() para obtener objetos planos en lugar de documentos de Mongoose
@@ -2498,7 +2501,6 @@ const viajesFuturosSinCerrar = async (req, res) => {
     // Realizar la búsqueda en la base de datos filtrando por la fecha posterior a hoy y estado no cerrado,
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana, y horaOrigen y numeroDeViaje
     const viajes = await Viajes.find({
-      estado: { $ne: "Terminado" },
       estado2: { $ne: "eliminado" },
       fechaOrigen: { $gt: fechaHoyString },
     })
@@ -2520,7 +2522,6 @@ const obtenerServiciosManana = async (req, res) => {
 
     // Realizar la búsqueda en la base de datos filtrando por la fecha de hoy
     const servicios = await Servicio.find({
-      estado: { $ne: "terminado" },
       fechaCarga: { $gt: fechaHoy },
     });
 
