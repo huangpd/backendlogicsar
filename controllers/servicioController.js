@@ -2632,15 +2632,15 @@ const asignarEquipo = async (req, res) => {
     viaje.estado = "Asignado";
   }
 
-  if (viajesServicio.length == 1) {
-    servicio.estado = "Coordinado";
-  } else if (
-    viajesServicio.every(
-      (viaje) => viaje.nombreChofer && viaje.nombreChofer.trim() !== ""
-    )
-  ) {
-    servicio.estado = "Coordinado";
-  }
+  // if (viajesServicio.length == 1) {
+  //   servicio.estado = "Coordinado";
+  // } else if (
+  //   viajesServicio.every(
+  //     (viaje) => viaje.nombreChofer && viaje.nombreChofer.trim() !== ""
+  //   )
+  // ) {
+  //   servicio.estado = "Coordinado";
+  // }
 
   actualizacion.icon = "TruckIcon";
   actualizacion.description = Date.now();
