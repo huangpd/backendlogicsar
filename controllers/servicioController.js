@@ -2476,7 +2476,7 @@ const viajesAyerSinCerrar = async (req, res) => {
     // Realizar la búsqueda en la base de datos filtrando por el día de ayer,
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana, y horaOrigen y numeroDeViaje
     const viajes = await Viajes.find({
-      fechaOrigen: { $gte: fechaInicioAyer, $lte: fechaFinAyer },
+      fechaOrigen: { $gte: fechaInicioAyer },
     })
       .sort({ fechaOrigen: -1, horaOrigen: -1, numeroDeViaje: 1 })
       .lean(); // Utilizamos lean() para obtener objetos planos en lugar de documentos de Mongoose
