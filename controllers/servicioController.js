@@ -2446,6 +2446,7 @@ const viajesHoy = async (req, res) => {
 
     // Realizar la búsqueda en la base de datos filtrando por la fecha de hoy y estado no cerrado
     const viajes = await Viajes.find({
+      estado2: { $ne: "eliminado" },
       fechaOrigen: fechaHoyString,
     })
       .sort({ horaOrigen: 1, numeroDeViaje: 1 })
