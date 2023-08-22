@@ -62,6 +62,12 @@ import {
   obtenerTodosLosServiciosAFacturar,
   actualizarNumeroFacturaDesdeClientes,
   completarDevolucionListado,
+  eliminarEquipos,
+  eliminarProveedor,
+  infoWhatsappLogicsar,
+  infoWhatsappChofer,
+  notificarChofer,
+  obtenerDocumentacionPendiente,
 } from "../controllers/servicioController.js";
 
 import checkAuth from "../middleware/checkAuth.js";
@@ -104,6 +110,12 @@ router.get("/obtener-estados-servicio", checkAuth, obtenerEstadosServicio);
 router.get("/obtener-estados-viaje", checkAuth, obtenerEstadosViaje);
 
 router.get("/obtener-todos-viajes", checkAuth, buscarTodosLosViajes);
+
+router.get(
+  "/obtener-documentacion-pendiente",
+  checkAuth,
+  obtenerDocumentacionPendiente
+);
 
 router.post("/buscar", checkAuth, busqueda);
 
@@ -152,7 +164,7 @@ router.post("/cambiar-estado-viaje/:id", checkAuth, actualizarEstadoViaje);
 router.post("/agregar-viaje/:id", checkAuth, agregarViajes);
 
 router.post("/notificar-viajes/:id", checkAuth, notificarViaje);
-router.post("/notificar-chofer/:id", checkAuth, notificarAlChofer);
+// router.post("/notificar-chofer/:id", checkAuth, notificarAlChofer);
 
 router.post("/notificar-aceptacion/:id", checkAuth, notificarAceptacion);
 
@@ -203,5 +215,13 @@ router.post("/nueva-terminal", checkAuth, nuevaTerminal);
 router.post("/agregar-concepto", checkAuth, agregarConcepto);
 
 router.post("/nueva-direccion-devolucion", checkAuth, nuevoLugarDevolucion);
+
+router.post("/eliminar-equipo/:id", checkAuth, eliminarEquipos);
+
+router.post("/eliminar-proveedor/:id", checkAuth, eliminarProveedor);
+router.post("/notificar-logicsar/:id", checkAuth, infoWhatsappLogicsar);
+router.post("/notificar-chofer/:id", checkAuth, infoWhatsappChofer);
+
+router.post("/notificar-chofer-mail/:id", checkAuth, notificarChofer);
 
 export default router;

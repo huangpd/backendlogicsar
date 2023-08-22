@@ -22,7 +22,11 @@ const documentacionSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    linkDocumento: {
+    linkRemito: {
+      type: String,
+      trim: true,
+    },
+    linkVacio: {
       type: String,
       trim: true,
     },

@@ -187,7 +187,7 @@ const viajesSchema = mongoose.Schema(
     chofer: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Cohofer",
+        ref: "Choferes",
       },
     ],
     nombreChofer: {
@@ -295,6 +295,12 @@ const viajesSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Devoluciones",
+      },
+    ],
+    idEquipo: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Equipos",
       },
     ],
   },

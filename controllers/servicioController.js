@@ -1,9 +1,10 @@
 import Cliente from "../models/Cliente.js";
-
+import twilio from "twilio";
 import Servicio from "../models/Servicio.js";
 import HistoriaServicios from "../models/HistoriaServicios.js";
 
 import {
+  notificacionViajeChofer,
   notificarRecepcionViaje,
   notificarViajeSoloLogicsar,
   notificarViajes,
@@ -16,7 +17,7 @@ import Viajes from "../models/Viajes.js";
 import Choferes from "../models/Choferes.js";
 import Camiones from "../models/Camiones.js";
 import Semis from "../models/Semis.js";
-
+import dotenv from "dotenv";
 import EstadosServicio from "../models/EstadosServicios.js";
 import EstadosViajes from "../models/EstadosViajes.js";
 import Devoluciones from "../models/DevolucionContenedores.js";
@@ -26,6 +27,11 @@ import Documentacion from "../models/Documentacion.js";
 import ConceptosAFActurar from "../models/ConceptosAFActurar.js";
 import { grabarEnExcel } from "../helpers/grabarNumeroFActura.js";
 import { faPieChart, faLineChart } from "@fortawesome/free-solid-svg-icons";
+dotenv.config();
+
+const accountSid = process.env.accountSid;
+const authToken = process.env.authToken;
+const client = twilio(accountSid, authToken);
 
 const nuevoServicioImportacion = async (req, res) => {
   const { idCliente } = req.body;
@@ -70,7 +76,6 @@ const nuevoServicioImportacion = async (req, res) => {
         numeroContenedor: "Mercaderia Suelta",
         fechaOrigen: servicioalmacenado.fechaCarga,
         horaOrigen: servicioalmacenado.horaCarga,
-        creador: req.usuario._id,
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenTerminal: origenCarga,
@@ -146,7 +151,6 @@ const nuevoServicioImportacion = async (req, res) => {
               numeroContenedor: numeroContenedor.numeroContenedor,
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
-              creador: req.usuario._id,
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenTerminal: origenCarga,
@@ -180,16 +184,6 @@ const nuevoServicioImportacion = async (req, res) => {
               viajeAlmacenado._id,
               numeroContenedor.numeroContenedor,
               "Remito"
-            );
-            await cargarDocumentacionARecibir(
-              cliente.nombre,
-              cliente._id,
-              servicioalmacenado.numeroPedido,
-              servicioalmacenado._id,
-              `${servicioalmacenado.numeroPedido}/${index + 1}`,
-              viajeAlmacenado._id,
-              numeroContenedor.numeroContenedor,
-              "Devolucion Vacio"
             );
 
             return viajeAlmacenado._id;
@@ -246,7 +240,6 @@ const nuevoServicioImportacion = async (req, res) => {
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
-          creador: req.usuario._id,
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenTerminal: origenCarga,
@@ -278,16 +271,6 @@ const nuevoServicioImportacion = async (req, res) => {
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor,
           "Remito"
-        );
-        await cargarDocumentacionARecibir(
-          cliente.nombre,
-          cliente._id,
-          servicioalmacenado.numeroPedido,
-          servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/1`,
-          viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor,
-          "Devolucion Vacio"
         );
 
         const conceptos = {
@@ -386,7 +369,6 @@ const nuevoServicioExportacion = async (req, res) => {
         numeroContenedor: "Mercaderia Suelta",
         fechaOrigen: servicioalmacenado.fechaCarga,
         horaOrigen: servicioalmacenado.horaCarga,
-        creador: req.usuario._id,
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
@@ -463,7 +445,6 @@ const nuevoServicioExportacion = async (req, res) => {
               numeroContenedor: numeroContenedor.numeroContenedor,
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
-              creador: req.usuario._id,
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
@@ -497,16 +478,6 @@ const nuevoServicioExportacion = async (req, res) => {
               viajeAlmacenado._id,
               numeroContenedor.numeroContenedor,
               "Remito"
-            );
-            await cargarDocumentacionARecibir(
-              cliente.nombre,
-              cliente._id,
-              servicioalmacenado.numeroPedido,
-              servicioalmacenado._id,
-              `${servicioalmacenado.numeroPedido}/${index + 1}`,
-              viajeAlmacenado._id,
-              numeroContenedor.numeroContenedor,
-              "Devolucion Vacio"
             );
 
             return viajeAlmacenado._id;
@@ -565,7 +536,6 @@ const nuevoServicioExportacion = async (req, res) => {
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
-          creador: req.usuario._id,
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
@@ -598,16 +568,7 @@ const nuevoServicioExportacion = async (req, res) => {
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor
         );
-        await cargarDocumentacionARecibir(
-          cliente.nombre,
-          cliente._id,
-          servicioalmacenado.numeroPedido,
-          servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/1`,
-          viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor,
-          "Devolucion Vacio"
-        );
+
         const conceptos = {
           descripcion0: `${servicioalmacenado.tipoCarga}`,
           descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
@@ -705,7 +666,6 @@ const nuevaRoundTripExpo = async (req, res) => {
         numeroContenedor: "Mercaderia Suelta",
         fechaOrigen: servicioalmacenado.fechaCarga,
         horaOrigen: servicioalmacenado.horaCarga,
-        creador: req.usuario._id,
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
@@ -783,7 +743,6 @@ const nuevaRoundTripExpo = async (req, res) => {
               numeroContenedor: numeroContenedor.numeroContenedor,
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
-              creador: req.usuario._id,
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
@@ -819,16 +778,6 @@ const nuevaRoundTripExpo = async (req, res) => {
               viajeAlmacenado._id,
               numeroContenedor.numeroContenedor,
               "Remito"
-            );
-            await cargarDocumentacionARecibir(
-              cliente.nombre,
-              cliente._id,
-              servicioalmacenado.numeroPedido,
-              servicioalmacenado._id,
-              `${servicioalmacenado.numeroPedido}/${index + 1}`,
-              viajeAlmacenado._id,
-              numeroContenedor.numeroContenedor,
-              "Devolucion Vacio"
             );
 
             return viajeAlmacenado._id;
@@ -887,7 +836,6 @@ const nuevaRoundTripExpo = async (req, res) => {
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
-          creador: req.usuario._id,
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
@@ -922,16 +870,7 @@ const nuevaRoundTripExpo = async (req, res) => {
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor
         );
-        await cargarDocumentacionARecibir(
-          cliente.nombre,
-          cliente._id,
-          servicioalmacenado.numeroPedido,
-          servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/1`,
-          viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor,
-          "Devolucion Vacio"
-        );
+
         const conceptos = {
           descripcion0: `${servicioalmacenado.tipoCarga}`,
           descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
@@ -1028,7 +967,6 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
         numeroContenedor: "Mercaderia Suelta",
         fechaOrigen: servicioalmacenado.fechaCarga,
         horaOrigen: servicioalmacenado.horaCarga,
-        creador: req.usuario._id,
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
@@ -1106,7 +1044,6 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
 
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
-              creador: req.usuario._id,
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
@@ -1140,16 +1077,6 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
               viajeAlmacenado._id,
               numeroContenedor.numeroContenedor,
               "Remito"
-            );
-            await cargarDocumentacionARecibir(
-              cliente.nombre,
-              cliente._id,
-              servicioalmacenado.numeroPedido,
-              servicioalmacenado._id,
-              `${servicioalmacenado.numeroPedido}/${index + 1}`,
-              viajeAlmacenado._id,
-              numeroContenedor.numeroContenedor,
-              "Devolucion Vacio"
             );
 
             return viajeAlmacenado._id;
@@ -1208,7 +1135,6 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
-          creador: req.usuario._id,
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
@@ -1241,16 +1167,7 @@ const nuevoServicioDevolucionVacios = async (req, res) => {
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor
         );
-        await cargarDocumentacionARecibir(
-          cliente.nombre,
-          cliente._id,
-          servicioalmacenado.numeroPedido,
-          servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/1`,
-          viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor,
-          "Devolucion Vacio"
-        );
+
         const conceptos = {
           descripcion0: `${servicioalmacenado.tipoCarga}`,
           descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
@@ -1347,7 +1264,6 @@ const nuevoTransito = async (req, res) => {
         numeroContenedor: "Mercaderia Suelta",
         fechaOrigen: servicioalmacenado.fechaCarga,
         horaOrigen: servicioalmacenado.horaCarga,
-        creador: req.usuario._id,
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenTerminal: origenCarga,
@@ -1424,7 +1340,6 @@ const nuevoTransito = async (req, res) => {
               numeroContenedor: numeroContenedor.numeroContenedor,
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
-              creador: req.usuario._id,
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenTerminal: origenCarga,
@@ -1459,16 +1374,6 @@ const nuevoTransito = async (req, res) => {
               viajeAlmacenado._id,
               numeroContenedor.numeroContenedor,
               "Remito"
-            );
-            await cargarDocumentacionARecibir(
-              cliente.nombre,
-              cliente._id,
-              servicioalmacenado.numeroPedido,
-              servicioalmacenado._id,
-              `${servicioalmacenado.numeroPedido}/${index + 1}`,
-              viajeAlmacenado._id,
-              numeroContenedor.numeroContenedor,
-              "Devolucion Vacio"
             );
 
             return viajeAlmacenado._id;
@@ -1527,7 +1432,6 @@ const nuevoTransito = async (req, res) => {
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
-          creador: req.usuario._id,
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenTerminal: origenCarga,
@@ -1560,16 +1464,7 @@ const nuevoTransito = async (req, res) => {
           numeroContenedores[0].numeroContenedor,
           "Remito"
         );
-        await cargarDocumentacionARecibir(
-          cliente.nombre,
-          cliente._id,
-          servicioalmacenado.numeroPedido,
-          servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/${index + 1}`,
-          viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor,
-          "Devolucion Vacio"
-        );
+
         const conceptos = {
           descripcion0: `${servicioalmacenado.tipoCarga}`,
           descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
@@ -1665,7 +1560,6 @@ const nuevoServicioNacional = async (req, res) => {
         numeroContenedor: "Mercaderia Suelta",
         fechaOrigen: servicioalmacenado.fechaCarga,
         horaOrigen: servicioalmacenado.horaCarga,
-        creador: req.usuario._id,
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
@@ -1742,7 +1636,6 @@ const nuevoServicioNacional = async (req, res) => {
 
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
-              creador: req.usuario._id,
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
@@ -1777,16 +1670,6 @@ const nuevoServicioNacional = async (req, res) => {
               viajeAlmacenado._id,
               numeroContenedor.numeroContenedor,
               "Remito"
-            );
-            await cargarDocumentacionARecibir(
-              cliente.nombre,
-              cliente._id,
-              servicioalmacenado.numeroPedido,
-              servicioalmacenado._id,
-              `${servicioalmacenado.numeroPedido}/${index + 1}`,
-              viajeAlmacenado._id,
-              numeroContenedor.numeroContenedor,
-              "Devolucion Vacio"
             );
 
             return viajeAlmacenado._id;
@@ -1845,7 +1728,6 @@ const nuevoServicioNacional = async (req, res) => {
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
-          creador: req.usuario._id,
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
@@ -1879,16 +1761,7 @@ const nuevoServicioNacional = async (req, res) => {
           numeroContenedores[0].numeroContenedor,
           "Remito"
         );
-        await cargarDocumentacionARecibir(
-          cliente.nombre,
-          cliente._id,
-          servicioalmacenado.numeroPedido,
-          servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/1`,
-          viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor,
-          "Devolucion Vacio"
-        );
+
         const conceptos = {
           descripcion0: `${servicioalmacenado.tipoCarga}`,
           descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
@@ -1984,7 +1857,6 @@ const nuevoEmptyPickUp = async (req, res) => {
         numeroContenedor: "Mercaderia Suelta",
         fechaOrigen: servicioalmacenado.fechaCarga,
         horaOrigen: servicioalmacenado.horaCarga,
-        creador: req.usuario._id,
         cliente: cliente._id,
         nombreCliente: cliente.nombre,
         domicilioOrigenCliente: origenCarga,
@@ -2062,7 +1934,6 @@ const nuevoEmptyPickUp = async (req, res) => {
 
               fechaOrigen: servicioalmacenado.fechaCarga,
               horaOrigen: servicioalmacenado.horaCarga,
-              creador: req.usuario._id,
               cliente: cliente._id,
               nombreCliente: cliente.nombre,
               domicilioOrigenCliente: origenCarga,
@@ -2096,16 +1967,6 @@ const nuevoEmptyPickUp = async (req, res) => {
               viajeAlmacenado._id,
               numeroContenedor.numeroContenedor,
               "Remito"
-            );
-            await cargarDocumentacionARecibir(
-              cliente.nombre,
-              cliente._id,
-              servicioalmacenado.numeroPedido,
-              servicioalmacenado._id,
-              `${servicioalmacenado.numeroPedido}/${index + 1}`,
-              viajeAlmacenado._id,
-              numeroContenedor.numeroContenedor,
-              "Devolucion Vacio"
             );
 
             return viajeAlmacenado._id;
@@ -2164,7 +2025,6 @@ const nuevoEmptyPickUp = async (req, res) => {
           estado: estadoViaje.estado,
           horaOrigen: servicioalmacenado.horaCarga,
           fechaOrigen: servicioalmacenado.fechaCarga,
-          creador: req.usuario._id,
           cliente: cliente._id,
           nombreCliente: cliente.nombre,
           domicilioOrigenCliente: origenCarga,
@@ -2197,16 +2057,7 @@ const nuevoEmptyPickUp = async (req, res) => {
           viajeAlmacenado._id,
           numeroContenedores[0].numeroContenedor
         );
-        await cargarDocumentacionARecibir(
-          cliente.nombre,
-          cliente._id,
-          servicioalmacenado.numeroPedido,
-          servicioalmacenado._id,
-          `${servicioalmacenado.numeroPedido}/1`,
-          viajeAlmacenado._id,
-          numeroContenedores[0].numeroContenedor,
-          "Devolucion Vacio"
-        );
+
         const conceptos = {
           descripcion0: `${servicioalmacenado.tipoCarga}`,
           descripcion1: `Por transporte de ${servicioalmacenado.cantidad} ${
@@ -2294,8 +2145,6 @@ const notificarViaje = async (req, res) => {
 
   const usuarios = await Usuario.find({ cliente: servicio.cliente });
 
-  const estadosViaje = await EstadosViajes.find({ numeroEstado: 5 });
-
   actualizacion.icon = "EnvelopeIcon";
   actualizacion.description = Date.now();
   actualizacion.color = "text-blue-500";
@@ -2312,6 +2161,7 @@ const notificarViaje = async (req, res) => {
         patenteCamion,
         numeroDeViaje,
         chofer,
+        referenciaCliente,
       } = viaje;
 
       const datosChofer = await Choferes.findById(chofer);
@@ -2327,13 +2177,12 @@ const notificarViaje = async (req, res) => {
         patenteSemi,
         dni,
         telefono,
+        referenciaCliente,
       };
 
       // Agregar el objeto al array informacionEnviar
       informacionEnviar.push(informacionViaje);
 
-      // Asignar el valor manualmente al campo notificado en el modelo de Viaje
-      viaje.notificado = "Notificado";
       const viajeGuardado = await viaje.save();
     } catch (error) {
       // Manejo de errores para cada iteración
@@ -2465,16 +2314,23 @@ const viajesAyerSinCerrar = async (req, res) => {
     // Obtener la fecha de hoy con la hora actual
     const fechaHoy = new Date();
 
-    // Establecer la hora de fechaHoy a las 00:00:00 para incluir solo la fecha
+    // Establecer la hora de fechaHoy a las 00:00:00 para solo considerar la fecha
     fechaHoy.setHours(0, 0, 0, 0);
-    const fechaHoyString = fechaHoy.toISOString().split("T")[0];
 
-    // Realizar la búsqueda en la base de datos filtrando por la fecha anterior a hoy y estado no cerrado,
+    // Calcular la fecha de hace 2 días
+    const haceDosDias = new Date(fechaHoy.getTime() - 2 * 24 * 60 * 60 * 1000);
+    const haceDosDiasString = haceDosDias.toISOString().split("T")[0];
+
+    // Realizar la búsqueda en la base de datos filtrando por la fecha entre hace 2 días y hoy (exclusivo) y estado no eliminado,
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana, y horaOrigen y numeroDeViaje
     const viajes = await Viajes.find({
-      fechaOrigen: { $lt: fechaHoyString },
+      estado2: { $ne: "eliminado" },
+      fechaOrigenParaListados: {
+        $gte: haceDosDiasString,
+        $lt: fechaHoy.toISOString().split("T")[0],
+      },
     })
-      .sort({ fechaOrigen: -1, horaOrigen: -1, numeroDeViaje: 1 })
+      .sort({ fechaOrigenParaListados: -1, horaOrigen: -1, numeroDeViaje: 1 })
       .lean(); // Utilizamos lean() para obtener objetos planos en lugar de documentos de Mongoose
 
     res.json(viajes);
@@ -2599,6 +2455,7 @@ const asignarEquipo = async (req, res) => {
   const { idChofer } = req.body;
   const { idCamion } = req.body;
   const { idSemi } = req.body;
+  const { idEquipo } = req.body;
   const viaje = await Viajes.findById(id);
   const actualizacion = new Actualizaciones();
   const servicio = await Servicio.findById(viaje.servicio);
@@ -2610,7 +2467,14 @@ const asignarEquipo = async (req, res) => {
   const chofer = await Choferes.findById(idChofer);
   const camion = await Camiones.findById(idCamion);
 
-  if (idSemi !== "") {
+  let fantasiaOrigen = "";
+  let fantasiaDestino = "";
+  let origen = "";
+  let destino = "";
+
+  console.log(idSemi);
+
+  if (idSemi.length != 0) {
     const semi = await Semis.findById(idSemi);
     viaje.semi = idSemi;
     viaje.patenteSemi = semi.patente;
@@ -2624,20 +2488,13 @@ const asignarEquipo = async (req, res) => {
   viaje.patenteCamion = camion.patente;
 
   viaje.estado = estadoViaje.estado;
+  if (idEquipo !== "no") {
+    viaje.idEquipo = idEquipo;
+  }
 
   if (viaje.estado === "Por Asignar") {
     viaje.estado = "Asignado";
   }
-
-  // if (viajesServicio.length == 1) {
-  //   servicio.estado = "Coordinado";
-  // } else if (
-  //   viajesServicio.every(
-  //     (viaje) => viaje.nombreChofer && viaje.nombreChofer.trim() !== ""
-  //   )
-  // ) {
-  //   servicio.estado = "Coordinado";
-  // }
 
   actualizacion.icon = "TruckIcon";
   actualizacion.description = Date.now();
@@ -2656,18 +2513,243 @@ const asignarEquipo = async (req, res) => {
     await documentacion[0].save();
     await servicio.save();
     await actualizacion.save();
+    await aprobarEquipo(viajeAlmacenado._id);
+
     res.json(viajeAlmacenado);
   } catch (error) {
     console.log(error);
   }
 };
 
-const aprobarEquipo = async (req, res) => {
+const infoWhatsappLogicsar = async (req, res) => {
   const { id } = req.params;
+
+  const viaje = await Viajes.findById(id);
+  const chofer = await Choferes.findById(viaje.chofer);
+  const camion = await Camiones.findById(viaje.camion);
+  const semi = await Semis.findById(viaje.semi);
+  let fantasiaOrigen = "";
+  let fantasiaDestino = "";
+  let origen = "";
+  let destino = "";
+  if (viaje.tipoServicio == "importacion") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "one-way") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "round-trip") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "transito-aduanero") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "nacional") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "vacios") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "empty-pick") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+
+  const mensaje = generarMensaje({
+    pedido: viaje.numeroDeViaje,
+    chofer: {
+      nombre: chofer.nombre,
+      apellido: chofer.apellido,
+      dni: chofer.dni,
+    },
+    camion: camion.patente,
+    semi: "patente semi",
+    diaCarga: viaje.fechaOrigen,
+    horaCarga: viaje.horaOrigen,
+    mercaderia: {
+      descripcion: viaje.tipoCarga,
+      peso: viaje.pesoCarga,
+      contenedorId: viaje.numeroContenedor,
+    },
+    lugarCarga: { nombre: fantasiaOrigen },
+    domicilioCarga: origen,
+    lugarDescarga: { nombre: fantasiaDestino },
+    domicilioDescarga: destino,
+    observaciones: "**",
+  });
+
+  console.log(mensaje);
+
+  try {
+    await client.messages.create({
+      body: mensaje,
+      from: "whatsapp:+14155238886",
+      to: `whatsapp:+5491127436149`,
+    });
+    res.json({ msg: "todo ok" });
+  } catch (twilioError) {
+    console.error("Error al enviar mensaje con Twilio:", twilioError);
+  }
+};
+
+const infoWhatsappChofer = async (req, res) => {
+  const { id } = req.params;
+
+  const viaje = await Viajes.findById(id);
+  const chofer = await Choferes.findById(viaje.chofer);
+  const camion = await Camiones.findById(viaje.camion);
+  const semi = await Semis.findById(viaje.semi);
+  let fantasiaOrigen = "";
+  let fantasiaDestino = "";
+  let origen = "";
+  let destino = "";
+  if (viaje.tipoServicio == "importacion") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "one-way") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "round-trip") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "transito-aduanero") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "nacional") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "vacios") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "empty-pick") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+
+  const mensaje = generarMensaje({
+    pedido: viaje.numeroDeViaje,
+    chofer: {
+      nombre: chofer.nombre,
+      apellido: chofer.apellido,
+      dni: chofer.dni,
+    },
+    camion: camion.patente,
+    semi: "patente semi",
+    diaCarga: viaje.fechaOrigen,
+    horaCarga: viaje.horaOrigen,
+    mercaderia: {
+      descripcion: viaje.tipoCarga,
+      peso: viaje.pesoCarga,
+      contenedorId: viaje.numeroContenedor,
+    },
+    lugarCarga: { nombre: fantasiaOrigen },
+    domicilioCarga: origen,
+    lugarDescarga: { nombre: fantasiaDestino },
+    domicilioDescarga: destino,
+    observaciones: "**",
+  });
+
+  console.log(mensaje);
+
+  try {
+    await client.messages.create({
+      body: mensaje,
+      from: "whatsapp:+14155238886",
+      to: `whatsapp:+549${chofer.telefono}`,
+    });
+    res.json({ msg: "todo ok" });
+  } catch (twilioError) {
+    console.error("Error al enviar mensaje con Twilio:", twilioError);
+  }
+};
+
+const generarMensaje = ({
+  pedido,
+  chofer,
+  camion,
+  semi,
+  diaCarga,
+  horaCarga,
+  mercaderia,
+  lugarCarga,
+  domicilioCarga,
+  lugarDescarga,
+  domicilioDescarga,
+  observaciones,
+}) => {
+  return `
+------------------------------		
+🧾 PEDIDO:		${pedido}	
+------------------------------
+🧒🏻 - ${chofer.nombre} ${chofer.apellido}			
+CUIL/DNI: ${chofer.dni}			
+🚛 CAMION Y SEMI:	${camion} / ${semi ? semi : ""}		
+------------------------------	
+DÍA DE CARGA		${diaCarga}	
+HORA DE CARGA		${horaCarga}HS	
+------------------------------		
+MERCADERIA:	${mercaderia.descripcion} - ${mercaderia.peso} KG - 		
+${mercaderia.contenedorId}		
+LUGAR DE CARGA:	${lugarCarga.nombre}		
+DOMICILIO:	${domicilioCarga}		
+    
+LUGAR DE DESCARGA:	${lugarDescarga.nombre}		
+DOMICILIO:	${domicilioDescarga}		
+------------------------------
+OBSERVACIONES:	${observaciones}		
+------------------------------
+EL CONT. VACIO DEBE IR A:			
+TURNO:			
+------------------------------
+"Por favor, anotar el número de pedido en los remitos de la carga"
+`;
+};
+
+const aprobarEquipo = async (id) => {
   const actualizacion = new Actualizaciones();
   const viaje = await Viajes.findById(id);
 
-  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 5 });
+  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 2 });
 
   viaje.estado = estadoViaje.estado;
 
@@ -2679,7 +2761,6 @@ const aprobarEquipo = async (req, res) => {
   try {
     const { data } = await viaje.save();
     await actualizacion.save();
-    res.json(data);
   } catch (error) {
     console.log(error);
   }
@@ -3588,7 +3669,8 @@ const editarDocumento = async (req, res) => {
 
   documento.numeroDocumentacion =
     req.body.numeroDocumentacion || documento.numeroDocumentacion;
-  documento.linkDocumento = req.body.linkDocumento || documento.linkDocumento;
+  documento.linkRemito = req.body.linkRemito || documento.linkRemito;
+  documento.linkVacio = req.body.linkVacio || documento.linkVacio;
   documento.estado = req.body.estado || documento.estado;
   console.log(req.body.estado);
   if (
@@ -3922,6 +4004,97 @@ const actualizarNumeroFacturaDesdeClientes = async (req, res) => {
 
 const filtrarViajesModal = async (req, res) => {};
 
+const eliminarEquipos = async (req, res) => {
+  const { id } = req.params;
+  const viaje = await Viajes.findById(id);
+
+  if (!viaje) {
+    return res.status(404).json({ message: "Viaje no encontrado." });
+  }
+  viaje.chofer = undefined;
+  viaje.nombreChofer = undefined;
+  viaje.camion = undefined;
+  viaje.patenteCamion = undefined;
+  viaje.semi = undefined;
+  viaje.patenteSemi = undefined;
+  viaje.idEquipo = undefined;
+
+  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 1 });
+
+  viaje.estado = estadoViaje.estado;
+
+  try {
+    // Eliminamos la información del chofer, camión y semi.
+
+    // Guardamos los cambios en la base de datos.
+    const equipoBorrado = await viaje.save();
+
+    console.log(equipoBorrado);
+
+    // Respondemos con el viaje actualizado.
+    res.json(viaje);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error al eliminar los equipos." });
+  }
+};
+
+const eliminarProveedor = async (req, res) => {
+  const { id } = req.params;
+  const viaje = await Viajes.findById(id);
+
+  if (!viaje) {
+    return res.status(404).json({ message: "Viaje no encontrado." });
+  }
+  viaje.chofer = undefined;
+  viaje.nombreChofer = undefined;
+  viaje.camion = undefined;
+  viaje.patenteCamion = undefined;
+  viaje.semi = undefined;
+  viaje.patenteSemi = undefined;
+  viaje.idEquipo = undefined;
+  viaje.proveedor = undefined;
+  viaje.nombreProveedor = undefined;
+
+  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 1 });
+
+  viaje.estado = estadoViaje.estado;
+
+  try {
+    // Eliminamos la información del chofer, camión y semi.
+
+    // Guardamos los cambios en la base de datos.
+    const equipoBorrado = await viaje.save();
+
+    console.log(equipoBorrado);
+
+    // Respondemos con el viaje actualizado.
+    res.json(viaje);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error al eliminar los equipos." });
+  }
+};
+
+const notificarChofer = async (req, res) => {
+  const { id } = req.params;
+  const viaje = await Viajes.findById(id);
+  try {
+    await notificacionViajeChofer(viaje);
+    res.json({ msg: "Chofer Notificado" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al enviar mail." });
+  }
+};
+
+const obtenerDocumentacionPendiente = async (req, res) => {
+  const documentacionPendiente = await Documentacion.find({
+    estado: { $ne: "Fisico y Virtual" },
+  });
+
+  res.json(documentacionPendiente);
+};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -3982,4 +4155,10 @@ export {
   obtenerTodosLosServiciosAFacturar,
   actualizarNumeroFacturaDesdeClientes,
   completarDevolucionListado,
+  eliminarEquipos,
+  eliminarProveedor,
+  infoWhatsappLogicsar,
+  infoWhatsappChofer,
+  notificarChofer,
+  obtenerDocumentacionPendiente,
 };

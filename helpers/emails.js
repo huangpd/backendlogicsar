@@ -2,6 +2,9 @@ import nodemailer from "nodemailer";
 import moment from "moment";
 
 import "moment/locale/es.js";
+import Choferes from "../models/Choferes.js";
+import Camiones from "../models/Camiones.js";
+import Semis from "../models/Semis.js";
 
 moment.locale("es");
 
@@ -687,4 +690,177 @@ export const notificarCamionesSoloLogicsar = async (informacionEnviar) => {
 
   //       `,
   //   });
+};
+
+export const notificacionViajeChofer = async (viaje) => {
+  console.log("Iniciando notificación...");
+  console.log(viaje);
+  const hemail = process.env.EMAIL;
+  const hpass = process.env.PASSWORD;
+  const host = process.env.HOST;
+  const port = process.env.EMAIL_PORT;
+
+  const transport = nodemailer.createTransport({
+    host: host,
+    port: port,
+    auth: {
+      user: hemail,
+      pass: hpass,
+    },
+  });
+  console.log("Buscando chofer...");
+  const chofer = await Choferes.findById(viaje.chofer);
+  console.log("Buscando camion...");
+  const camion = await Camiones.findById(viaje.camion);
+  console.log("Buscando semi...");
+  const semi = await Semis.findById(viaje.semi);
+
+  let fantasiaOrigen = "";
+  let fantasiaDestino = "";
+  let origen = "";
+  let destino = "";
+  if (viaje.tipoServicio == "importacion") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "one-way") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "round-trip") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "transito-aduanero") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenTerminal;
+    destino = viaje.nombreDomicilioDestinoTerminal;
+  }
+  if (viaje.tipoServicio == "nacional") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "vacios") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+  if (viaje.tipoServicio == "empty-pick") {
+    fantasiaOrigen = viaje.fantasiaOrigen;
+    fantasiaDestino = viaje.fantasiaDestino;
+    origen = viaje.nombreDomicilioOrigenCliente;
+    destino = viaje.nombreDomicilioDestinoCliente;
+  }
+
+  console.log("Generando mensaje...");
+
+  const mensaje = generarMensajito({
+    pedido: viaje.numeroDeViaje,
+    chofer: {
+      nombre: chofer.nombre,
+      apellido: chofer.apellido,
+      dni: chofer.dni,
+    },
+    camion: camion.patente,
+    semi: semi ? semi.patente : "",
+    diaCarga: viaje.fechaOrigen,
+    horaCarga: viaje.horaOrigen,
+    mercaderia: {
+      descripcion: viaje.tipoCarga,
+      peso: viaje.pesoCarga,
+      contenedorId: viaje.numeroContenedor,
+    },
+    lugarCarga: { nombre: fantasiaOrigen },
+    domicilioCarga: origen,
+    lugarDescarga: { nombre: fantasiaDestino },
+    domicilioDescarga: destino,
+    observaciones: viaje.observaciones ? viaje.observaciones : "**",
+  });
+
+  console.log("Mensaje generado:", mensaje);
+
+  try {
+    console.log("Enviando email...");
+    await transport.sendMail({
+      from: '"CarryOn" <carryon.arg@gmail.com>',
+      to: "carryon.arg@gmail.com",
+      cc: "carryon.arg@gmail.com",
+      subject: `Notificación de Viaje - ${moment(viaje.fechaOrigen).format(
+        "dddd DD/MM"
+      )} - Pedido Nro ${viaje.numeroDeViaje}`,
+      text: mensaje,
+      html: `<pre>${mensaje}</pre>`,
+    });
+    console.log("Email enviado exitosamente!");
+  } catch (error) {
+    console.error("Error al enviar el email:", error);
+    throw error;
+  }
+};
+
+const generarMensajito = ({
+  pedido,
+  chofer,
+  camion,
+  semi,
+  diaCarga,
+  horaCarga,
+  mercaderia,
+  lugarCarga,
+  domicilioCarga,
+  lugarDescarga,
+  domicilioDescarga,
+  observaciones,
+}) => {
+  console.log("Dentro de generarMensajito");
+
+  console.log("Valor de pedido:", pedido);
+  console.log("Valor de chofer:", chofer);
+  console.log("Valor de camion:", camion);
+  console.log("Valor de semi:", semi);
+  console.log("Valor de diaCarga:", diaCarga);
+  console.log("Valor de horaCarga:", horaCarga);
+  console.log("Valor de mercaderia:", mercaderia);
+  console.log("Valor de lugarCarga:", lugarCarga);
+  console.log("Valor de domicilioCarga:", domicilioCarga);
+  console.log("Valor de lugarDescarga:", lugarDescarga);
+  console.log("Valor de domicilioDescarga:", domicilioDescarga);
+  console.log("Valor de observaciones:", observaciones);
+
+  return `
+------------------------------		
+🧾 PEDIDO:		${pedido}	
+------------------------------
+🧒🏻 - ${chofer.nombre} ${chofer.apellido}			
+CUIL/DNI: ${chofer.dni}			
+🚛 CAMION Y SEMI:	${camion} / ${semi ? semi : ""}		
+------------------------------	
+DÍA DE CARGA		${diaCarga}	
+HORA DE CARGA		${horaCarga}HS	
+------------------------------		
+MERCADERIA:	${mercaderia.descripcion} - ${mercaderia.peso} KG - 		
+${mercaderia.contenedorId}		
+LUGAR DE CARGA:	${lugarCarga.nombre}		
+DOMICILIO:	${domicilioCarga}		
+    
+LUGAR DE DESCARGA:	${lugarDescarga.nombre}		
+DOMICILIO:	${domicilioDescarga}		
+------------------------------
+OBSERVACIONES:	${observaciones}		
+------------------------------
+EL CONT. VACIO DEBE IR A:			
+TURNO:			
+------------------------------
+"Por favor, anotar el número de pedido en los remitos de la carga"
+`;
 };
