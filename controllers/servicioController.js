@@ -2150,9 +2150,13 @@ const notificarViaje = async (req, res) => {
   actualizacion.color = "text-blue-500";
   actualizacion.title = `Viajes Servicio ${servicio.numeroPedido} notificado`;
 
-  for (const viajeId of viajeIds) {
-    // Buscar el viaje por su ID
-    const viaje = await Viajes.findById(viajeId);
+  if (
+    servicio.tipoCarga === "pallets" ||
+    servicio.tipoCarga === "cajas" ||
+    servicio.tipoCarga === "bultos"
+  ) {
+    const viaje = await Viajes.findById(servicio.viajesSueltos);
+
     try {
       const {
         numeroContenedor,
@@ -2185,10 +2189,50 @@ const notificarViaje = async (req, res) => {
 
       const viajeGuardado = await viaje.save();
     } catch (error) {
-      // Manejo de errores para cada iteración
       console.error(`Error al obtener el viaje con ID ${viajeId}:`, error);
     }
+  } else {
+    for (const viajeId of viajeIds) {
+      // Buscar el viaje por su ID
+      const viaje = await Viajes.findById(viajeId);
+      try {
+        const {
+          numeroContenedor,
+          nombreChofer,
+          patenteSemi,
+          patenteCamion,
+          numeroDeViaje,
+          chofer,
+          referenciaCliente,
+        } = viaje;
+
+        const datosChofer = await Choferes.findById(chofer);
+
+        const { dni, telefono } = datosChofer;
+
+        // Crear un objeto con los datos relevantes
+        const informacionViaje = {
+          numeroDeViaje,
+          numeroContenedor,
+          nombreChofer,
+          patenteCamion,
+          patenteSemi,
+          dni,
+          telefono,
+          referenciaCliente,
+        };
+
+        // Agregar el objeto al array informacionEnviar
+        informacionEnviar.push(informacionViaje);
+
+        const viajeGuardado = await viaje.save();
+      } catch (error) {
+        // Manejo de errores para cada iteración
+        console.error(`Error al obtener el viaje con ID ${viajeId}:`, error);
+      }
+    }
   }
+
   if (usuarios.length == 0) {
     await notificarViajeSoloLogicsar(servicio, informacionEnviar);
   } else {
@@ -2317,16 +2361,16 @@ const viajesAyerSinCerrar = async (req, res) => {
     // Establecer la hora de fechaHoy a las 00:00:00 para solo considerar la fecha
     fechaHoy.setHours(0, 0, 0, 0);
 
-    // Calcular la fecha de hace 2 días
-    const haceDosDias = new Date(fechaHoy.getTime() - 2 * 24 * 60 * 60 * 1000);
-    const haceDosDiasString = haceDosDias.toISOString().split("T")[0];
+    // Calcular la fecha de ayer
+    const ayer = new Date(fechaHoy.getTime() - 1 * 24 * 60 * 60 * 1000);
+    const ayerString = ayer.toISOString().split("T")[0];
 
-    // Realizar la búsqueda en la base de datos filtrando por la fecha entre hace 2 días y hoy (exclusivo) y estado no eliminado,
+    // Realizar la búsqueda en la base de datos filtrando por la fecha de ayer y estado no eliminado,
     // y luego ordenar los resultados por fecha de la más próxima a la más lejana, y horaOrigen y numeroDeViaje
     const viajes = await Viajes.find({
       estado2: { $ne: "eliminado" },
       fechaOrigenParaListados: {
-        $gte: haceDosDiasString,
+        $gte: ayerString,
         $lt: fechaHoy.toISOString().split("T")[0],
       },
     })
@@ -2428,6 +2472,9 @@ const reasignarProveedor = async (req, res) => {
 
   viaje.proveedor = proveedor._id;
   viaje.nombreProveedor = proveedor.nombre;
+  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 2 });
+
+  viaje.estado = estadoViaje.estado;
 
   viaje.chofer = [];
   viaje.camion = [];
@@ -2480,20 +2527,16 @@ const asignarEquipo = async (req, res) => {
     viaje.patenteSemi = semi.patente;
   }
 
-  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 4 });
+  const estadoViaje = await EstadosViajes.findOne({ numeroEstado: 5 });
 
   viaje.chofer = idChofer;
   viaje.nombreChofer = chofer.nombre + " " + chofer.apellido;
   viaje.camion = idCamion;
   viaje.patenteCamion = camion.patente;
-
   viaje.estado = estadoViaje.estado;
+
   if (idEquipo !== "no") {
     viaje.idEquipo = idEquipo;
-  }
-
-  if (viaje.estado === "Por Asignar") {
-    viaje.estado = "Asignado";
   }
 
   actualizacion.icon = "TruckIcon";

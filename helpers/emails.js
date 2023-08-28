@@ -593,13 +593,27 @@ export const notificarViajeSoloLogicsar = async (servicio, viajes) => {
             .map(
               (viaje) => `
             <tr>
-              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.numeroDeViaje}</td>
-              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.nombreChofer}</td>
-              <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.dni}</td>
-              <td style="border-bottom: 1px solid #ccc; padding: 10px;">${viaje.patenteCamion} / ${viaje.patenteSemi}</td>
-              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.telefono}</td>
-              <td style="border-bottom: 1px solid #ccc;  padding: 8px;">${viaje.referenciaCliente}</td>
-              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${viaje.numeroContenedor}</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${
+                viaje.numeroDeViaje ? viaje.numeroDeViaje : ""
+              }</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${
+                viaje.nombreChofer ? viaje.nombreChofer : ""
+              }</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 10px;">${
+                viaje.dni ? viaje.dni : ""
+              }</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 10px;">${
+                viaje.patenteCamion ? viaje.patenteCamion : ""
+              } / ${viaje.patenteSemi ? viaje.patenteSemi : ""}</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${
+                viaje.telefono ? viaje.telefono : ""
+              }</td>
+              <td style="border-bottom: 1px solid #ccc;  padding: 8px;">${
+                viaje.referenciaCliente ? viaje.referenciaCliente : ""
+              }</td>
+              <td style="border-bottom: 1px solid #ccc; padding: 8px;">${
+                viaje.numeroContenedor ? viaje.numeroContenedor : ""
+              }</td>
             </tr>      
           `
             )
