@@ -181,14 +181,14 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
         from: '"CarryOn" <carryon.arg@gmail.com>',
         to: email,
         cc: "carryon.arg@gmail.com",
-        subject: `Datos de camiones asignados - ${moment(fechaCarga).format(
+        subject: `🚛 Datos de camiones asignados - ${moment(fechaCarga).format(
           "dddd DD/MM"
         )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
         text: "Datos del transporte",
         html: `
             <p>Hola ${nombre},</p>
             <p>Los datos de los choferes y camiones asignados para esta operacion son:</p>
-            <p><b>Número de Pedido: ${numeroPedido}</b></p>
+            <p><b>🗒 Número de Pedido: ${numeroPedido}</b></p>
             <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
 
             <table style="border-collapse: separate; border-spacing: 0 8px; ">
@@ -241,14 +241,14 @@ export const notificarViajes = async (usuarios, servicio, viajes) => {
       from: '"CarryOn" <carryon.arg@gmail.com>',
       to: email,
       cc: "carryon.arg@gmail.com",
-      subject: `Pedido de Transporte - ${moment(fechaCarga).format(
-        "dddd DD/MM"
-      )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
+      subject: `🚛 Datos de los camiones asignados - ${moment(
+        fechaCarga
+      ).format("dddd DD/MM")} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
       text: "Datos del transporte",
       html: `
           <p>Hola ${nombre},</p>
           <p>Los datos de los choferes y camiones asignados para esta operacion son:</p>
-          <p><b>Número de Pedido: ${numeroPedido}</b></p>
+          <p><b>🗒 Número de Pedido: ${numeroPedido}</b></p>
           <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
 
           <table style="border-collapse: separate; border-spacing: 0 8px; ">
@@ -333,7 +333,7 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
         from: '"CarryOn" <carryon.arg@gmail.com>',
         to: email,
         cc: "carryon.arg@gmail.com",
-        subject: `Pedido de Transporte Nro ${numeroPedido} | ${moment(
+        subject: `🚚 Pedido de Transporte Nro ${numeroPedido} | ${moment(
           fechaCarga
         ).format("dddd DD/MM")} | ${horaCarga} | ${nombreTerminal}`,
         text: "Datos del transporte",
@@ -342,11 +342,11 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
           <p>Recibido y Coordinado este pedido para el dia ${moment(
             fechaCarga
           ).format("dddd DD/MM")} - ${horaCarga} </p>
-          <p><b>Número de Pedido: ${numeroPedido}</b></p>
+          <p><b>🗒 Número de Pedido: ${numeroPedido}</b></p>
           <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
 
-          <p>MERCADERIA:  ${cantidad} ${tipoCarga} - Peso: ${peso} KG </p>
-          <p>LUGAR DE CARGA: ${nombreTerminal} | ${origenCarga}</p>
+          <p>📦 MERCADERIA:  ${cantidad} ${tipoCarga} - Peso: ${peso} KG </p>
+          <p>🏭LUGAR DE CARGA: ${nombreTerminal} | ${origenCarga}</p>
           <p>LUGAR DE DESCARGA: ${destinoCarga}</p>
           ${
             observaciones !== "" ? `<p>OBSERVACIONES: ${observaciones}</p>` : ""
@@ -404,7 +404,7 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
       from: '"CarryOn" <carryon.arg@gmail.com>',
       to: email,
       cc: "carryon.arg@gmail.com",
-      subject: `Pedido de Transporte Nro ${numeroPedido} | ${moment(
+      subject: `🚚 Pedido de Transporte Nro ${numeroPedido} | ${moment(
         fechaCarga
       ).format("dddd DD/MM")} | ${horaCarga} | ${nombreTerminal}`,
       text: "Datos del transporte",
@@ -413,11 +413,11 @@ export const notificarRecepcionViaje = async (usuarios, servicio) => {
           <p>Recibido y Coordinado este pedido para el dia ${moment(
             fechaCarga
           ).format("dddd DD/MM")} - ${horaCarga} </p>
-          <p><b>Número de Pedido: ${numeroPedido}</b></p>
+          <p><b>🗒 Número de Pedido: ${numeroPedido}</b></p>
           <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
 
-          <p>MERCADERIA:${cantidad} ${tipoCarga} ${peso} KG </p>
-          <p>LUGAR DE CARGA: ${nombreTerminal} | ${origenCarga}</p>
+          <p>📦 MERCADERIA:${cantidad} ${tipoCarga} ${peso} KG </p>
+          <p>🏭 LUGAR DE CARGA: ${nombreTerminal} | ${origenCarga}</p>
           <p>LUGAR DE DESCARGA: ${destinoCarga}</p>
           ${
             observaciones !== "" ? `<p>OBSERVACIONES: ${observaciones}</p>` : ""
@@ -568,14 +568,14 @@ export const notificarViajeSoloLogicsar = async (servicio, viajes) => {
     from: '"CarryOn" <carryon.arg@gmail.com>',
     to: "carryon.arg@gmail.com",
     cc: "carryon.arg@gmail.com",
-    subject: `Pedido de Transporte - ${moment(fechaCarga).format(
+    subject: `🚛 Datos de los camiones asignados - ${moment(fechaCarga).format(
       "dddd DD/MM"
     )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
     text: "Datos del transporte",
     html: `
           <p>Hola Equipo Logicsar **,</p>
           <p>Los datos de los choferes y camiones asignados para esta operacion son:</p>
-          <p><b>Número de Pedido: ${numeroPedido}</b></p>
+          <p><b>🗒 Número de Pedido: ${numeroPedido}</b></p>
           <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
 
           <table style="border-collapse: separate; border-spacing: 0 8px; ">
@@ -654,14 +654,14 @@ export const notificarCamionesSoloLogicsar = async (informacionEnviar) => {
   //     from: '"CarryOn" <carryon.arg@gmail.com>',
   //     to: "carryon.arg@gmail.com",
   //     cc: "carryon.arg@gmail.com",
-  //     subject: `Pedido de Transporte - ${moment(fechaCarga).format(
+  //     subject: `🚛 Pedido de Transporte - ${moment(fechaCarga).format(
   //       "dddd DD/MM"
   //     )} - ${horaCarga} - Pedido Nro ${numeroPedido} `,
   //     text: "Datos del transporte",
   //     html: `
   //           <p>Hola Equipo Logicsar **,</p>
   //           <p>Los datos de los choferes y camiones asignados para esta operacion son:</p>
-  //           <p><b>Número de Pedido: ${numeroPedido}</b></p>
+  //           <p><b>🗒 Número de Pedido: ${numeroPedido}</b></p>
   //           <p><b>Por Cuenta y Orden de: ${nombreCliente}</b></p>
 
   //           <table style="border-collapse: separate; border-spacing: 0 8px; ">
