@@ -1,5 +1,5 @@
 import Cliente from "../models/Cliente.js";
-import twilio from "twilio";
+// import twilio from "twilio";
 import Servicio from "../models/Servicio.js";
 import HistoriaServicios from "../models/HistoriaServicios.js";
 
@@ -29,9 +29,9 @@ import { grabarEnExcel } from "../helpers/grabarNumeroFActura.js";
 import { faPieChart, faLineChart } from "@fortawesome/free-solid-svg-icons";
 dotenv.config();
 
-const accountSid = process.env.accountSid;
-const authToken = process.env.authToken;
-const client = twilio(accountSid, authToken);
+// const accountSid = process.env.accountSid;
+// const authToken = process.env.authToken;
+// const client = twilio(accountSid, authToken);
 
 const nuevoServicioImportacion = async (req, res) => {
   const { idCliente } = req.body;
@@ -2643,16 +2643,16 @@ const infoWhatsappLogicsar = async (req, res) => {
 
   console.log(mensaje);
 
-  try {
-    await client.messages.create({
-      body: mensaje,
-      from: "whatsapp:+14155238886",
-      to: `whatsapp:+5491127436149`,
-    });
-    res.json({ msg: "todo ok" });
-  } catch (twilioError) {
-    console.error("Error al enviar mensaje con Twilio:", twilioError);
-  }
+  // try {
+  //   await client.messages.create({
+  //     body: mensaje,
+  //     from: "whatsapp:+14155238886",
+  //     to: `whatsapp:+5491127436149`,
+  //   });
+  //   res.json({ msg: "todo ok" });
+  // } catch (twilioError) {
+  //   console.error("Error al enviar mensaje con Twilio:", twilioError);
+  // }
 };
 
 const infoWhatsappChofer = async (req, res) => {
@@ -2734,16 +2734,16 @@ const infoWhatsappChofer = async (req, res) => {
 
   console.log(mensaje);
 
-  try {
-    await client.messages.create({
-      body: mensaje,
-      from: "whatsapp:+14155238886",
-      to: `whatsapp:+549${chofer.telefono}`,
-    });
-    res.json({ msg: "todo ok" });
-  } catch (twilioError) {
-    console.error("Error al enviar mensaje con Twilio:", twilioError);
-  }
+  // try {
+  //   await client.messages.create({
+  //     body: mensaje,
+  //     from: "whatsapp:+14155238886",
+  //     to: `whatsapp:+549${chofer.telefono}`,
+  //   });
+  //   res.json({ msg: "todo ok" });
+  // } catch (twilioError) {
+  //   console.error("Error al enviar mensaje con Twilio:", twilioError);
+  // }
 };
 
 const generarMensaje = ({
