@@ -1,6 +1,8 @@
 import Cliente from "../models/Cliente.js";
 import Proveedor from "../models/Proveedor.js";
 import Movimientos from "../models/Movimientos.js";
+import { getAuthToken } from "../tangoGestion.js";
+import axios from "axios";
 
 const obtenerMovimientos = async (req, res) => {
   const movimientos = await Movimientos.find();
@@ -120,10 +122,32 @@ const eliminarMovimiento = async (req, res) => {
   res.json({ msg: "Movimiento eliminado correctamente" });
 };
 
+const consultarCuit = async (req, res) => {
+  const { cuit } = req.params;
+  console.log(cuit);
+  const token = await getAuthToken();
+  const dataEndpoint = `https://afip.tangofactura.com/Rest/GetContribuyente?cuit=${cuit}`;
+
+  try {
+    const response = await axios.get(dataEndpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response.data);
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error al obtener los datos del contribuyente:", error);
+    throw error;
+  }
+};
+
 export {
   obtenerMovimientos,
   nuevoMovimiento,
   obtenerMovimiento,
   editarMovimiento,
   eliminarMovimiento,
+  consultarCuit,
 };

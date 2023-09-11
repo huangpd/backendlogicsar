@@ -1,6 +1,24 @@
 import express from "express";
-
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(process.cwd(), "archivosSubidos"));
+  },
+  filename: async function (req, file, cb) {
+    const { id } = req.params;
+    const viaje = await Documentacion.findById(id);
+    const nuevoNombre =
+      String(viaje.numeroViaje).replace("/", "-") +
+      path.extname(file.originalname);
+    cb(null, nuevoNombre);
+  },
+});
+
+const upload = multer({ storage: storage }).single("archivo");
 
 import {
   obtenerServicio,
@@ -68,9 +86,15 @@ import {
   infoWhatsappChofer,
   notificarChofer,
   obtenerDocumentacionPendiente,
+  subirDocumento,
 } from "../controllers/servicioController.js";
 
+import { consultarAutenticacion } from "../whatsappbot.js";
+
 import checkAuth from "../middleware/checkAuth.js";
+import Documentacion from "../models/Documentacion.js";
+
+router.get("/consultar-autenticacion", checkAuth, consultarAutenticacion);
 
 router.get("/", checkAuth, obtenerServicios);
 router.get("/hoy", checkAuth, obtenerServiciosHoy);
@@ -223,5 +247,7 @@ router.post("/notificar-logicsar/:id", checkAuth, infoWhatsappLogicsar);
 router.post("/notificar-chofer/:id", checkAuth, infoWhatsappChofer);
 
 router.post("/notificar-chofer-mail/:id", checkAuth, notificarChofer);
+
+router.post("/cargar-documento/:id", checkAuth, upload, editarDocumento);
 
 export default router;

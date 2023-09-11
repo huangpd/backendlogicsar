@@ -1,3 +1,5 @@
 node_modules
 .env
 .gitignore
+.carryon-392712-4ac84298d1b2.json
+.client_secret.json

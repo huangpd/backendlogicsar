@@ -9,6 +9,7 @@ import proveedoresRouter from "./routes/proveedorRoutes.js";
 import contableRouter from "./routes/contableRoutes.js";
 import servicioRouter from "./routes/servicioRoutes.js";
 import minutasRouter from "./routes/minutasRoutes.js";
+import { bot } from "./whatsappbot.js";
 
 const app = express();
 app.use(express.json());
@@ -45,3 +46,5 @@ app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
   console.log(`Número total de requests realizados hoy: ${requestCount}`);
 });
+
+bot();

@@ -2,6 +2,9 @@ import Cliente from "../models/Cliente.js";
 // import twilio from "twilio";
 import Servicio from "../models/Servicio.js";
 import HistoriaServicios from "../models/HistoriaServicios.js";
+import { google } from "googleapis";
+import fs from "fs";
+import path from "path";
 
 import {
   notificacionViajeChofer,
@@ -28,6 +31,16 @@ import ConceptosAFActurar from "../models/ConceptosAFActurar.js";
 import { grabarEnExcel } from "../helpers/grabarNumeroFActura.js";
 import { faPieChart, faLineChart } from "@fortawesome/free-solid-svg-icons";
 dotenv.config();
+import key from "../client_secret.json" assert { type: "json" };
+import { enviarMensaje } from "../whatsappbot.js";
+
+const jwtClient = new google.auth.JWT(
+  key.client_id,
+  null,
+  key.client_secret,
+  ["https://www.googleapis.com/auth/drive"],
+  null
+);
 
 // const accountSid = process.env.accountSid;
 // const authToken = process.env.authToken;
@@ -2734,16 +2747,12 @@ const infoWhatsappChofer = async (req, res) => {
 
   console.log(mensaje);
 
-  // try {
-  //   await client.messages.create({
-  //     body: mensaje,
-  //     from: "whatsapp:+14155238886",
-  //     to: `whatsapp:+549${chofer.telefono}`,
-  //   });
-  //   res.json({ msg: "todo ok" });
-  // } catch (twilioError) {
-  //   console.error("Error al enviar mensaje con Twilio:", twilioError);
-  // }
+  try {
+    await enviarMensaje(mensaje, chofer.telefono);
+    res.json({ msg: "todo ok" });
+  } catch (twilioError) {
+    console.error("Error al enviar mensaje con Twilio:", twilioError);
+  }
 };
 
 const generarMensaje = ({
@@ -3701,6 +3710,9 @@ const obtenerDocumentacion = async (req, res) => {
 
 const editarDocumento = async (req, res) => {
   const { id } = req.params;
+  console.log(req.file);
+  console.log(req.body);
+  // Obtener el viaje aquí
 
   const documento = await Documentacion.findById(id);
   const actualizacion = new Actualizaciones();
@@ -3734,11 +3746,53 @@ const editarDocumento = async (req, res) => {
     actualizacion.title = `Se edito el documento del viaje Nro ${documento.numeroViaje}`;
     await actualizacion.save();
     const documentoAlmacenado = await documento.save();
+    const nuevoNombre =
+      String(documento.numeroViaje).replace("/", "-") +
+      path.extname(req.file.originalname);
+    const filePath = path.join(process.cwd(), "archivosSubidos", nuevoNombre);
+
+    const fileId = await uploadToDrive(
+      filePath,
+      nuevoNombre,
+      req.file.mimetype
+    );
+    console.log(`File uploaded successfully. File ID: ${fileId}`);
     res.json(documentoAlmacenado);
   } catch (error) {
     console.log(error);
   }
 };
+
+async function uploadToDrive(filePath, fileName, mimeType) {
+  await jwtClient.authorize();
+
+  const drive = google.drive("v3");
+  const fileMetadata = {
+    name: fileName,
+  };
+  const media = {
+    mimeType: mimeType,
+    body: fs.createReadStream(filePath),
+  };
+
+  return new Promise((resolve, reject) => {
+    drive.files.create(
+      {
+        auth: jwtClient,
+        resource: fileMetadata,
+        media: media,
+        fields: "id",
+      },
+      (err, file) => {
+        if (err) {
+          reject("Error during file upload.");
+        } else {
+          resolve(file.data.id);
+        }
+      }
+    );
+  });
+}
 
 const cargarConceptosAFacturar = async (
   fecha,
@@ -4138,6 +4192,61 @@ const obtenerDocumentacionPendiente = async (req, res) => {
   res.json(documentacionPendiente);
 };
 
+const subirDocumento = async (req, res) => {
+  //Evita registros duplicados
+  const { id } = req.params;
+
+  const usuario = await Usuario.findById(id);
+
+  // Log para verificar los archivos recibidos
+  console.log(req.files);
+
+  const fechaActual = new Date().setHours(0, 0, 0, 0);
+  const ultimoCaso = await Casos.findOne().sort({ fecha: -1 }); // Obtener el último caso creado
+  const ultimaFechaLote = ultimoCaso
+    ? new Date(ultimoCaso.fecha).setHours(0, 0, 0, 0)
+    : null;
+
+  let loteActual = 1; // Por defecto establecer el lote a 1
+
+  // Si no es un nuevo día, usar el siguiente valor de lote
+  if (fechaActual === ultimaFechaLote) {
+    loteActual = ultimoCaso.lote + 1;
+  }
+
+  try {
+    // Por cada archivo, crear un caso
+    for (const file of req.files) {
+      const caso = new Casos(req.body);
+
+      caso.usuario = usuario._id;
+      caso.empresa = usuario.empresa;
+      caso.sector = usuario.sector;
+      caso.nombreEmpresa = usuario.nombreEmpresa;
+      caso.nombreUsuario = usuario.nombreUsuario;
+      caso.status = "Ingresado";
+      caso.comentario = req.body.comentario;
+      caso.lote = loteActual; // Establecer el valor de lote
+
+      // Agregar la información del archivo al caso
+      caso.nombreArchivo = file.originalname;
+      caso.ubicacionArchivo = file.path;
+
+      // Guardar el caso
+      const nuevoCaso = await caso.save();
+
+      await renombrarYmoverArchivo(nuevoCaso);
+
+      loteActual++; // Incrementar el lote para el siguiente archivo
+    }
+
+    res.json({ msg: "Casos creados con éxito." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Error al crear casos." });
+  }
+};
+
 export {
   nuevoServicioImportacion,
   nuevoServicioExportacion,
@@ -4204,4 +4313,5 @@ export {
   infoWhatsappChofer,
   notificarChofer,
   obtenerDocumentacionPendiente,
+  subirDocumento,
 };

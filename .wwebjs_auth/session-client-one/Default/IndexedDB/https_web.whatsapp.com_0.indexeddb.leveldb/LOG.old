@@ -1,0 +1,45 @@
+2023/09/11-16:35:41.489 15d03 Reusing MANIFEST /Users/damianoliva/Desktop/CarryOn/Logicsar/backend/.wwebjs_auth/session-client-one/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/09/11-16:35:41.491 15d03 Recovering log #5762
+2023/09/11-16:35:41.523 15d03 Reusing old log /Users/damianoliva/Desktop/CarryOn/Logicsar/backend/.wwebjs_auth/session-client-one/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/005762.log 
+2023/09/11-16:36:01.873 b203 Compacting 1@1 + 10@2 files
+2023/09/11-16:36:01.921 b203 Generated table #5796@1: 20566 keys, 2145211 bytes
+2023/09/11-16:36:02.056 b203 Generated table #5797@1: 127428 keys, 2285252 bytes
+2023/09/11-16:36:02.222 b203 Generated table #5798@1: 104083 keys, 2256100 bytes
+2023/09/11-16:36:02.328 b203 Generated table #5799@1: 97413 keys, 2245896 bytes
+2023/09/11-16:36:02.552 b203 Generated table #5800@1: 98237 keys, 2248176 bytes
+2023/09/11-16:36:02.795 b203 Generated table #5801@1: 96933 keys, 2246650 bytes
+2023/09/11-16:36:03.157 b203 Generated table #5802@1: 100910 keys, 2250014 bytes
+2023/09/11-16:36:03.357 b203 Generated table #5803@1: 96875 keys, 2246573 bytes
+2023/09/11-16:36:03.523 b203 Generated table #5804@1: 101853 keys, 2252927 bytes
+2023/09/11-16:36:03.611 b203 Generated table #5805@1: 49231 keys, 1145515 bytes
+2023/09/11-16:36:03.612 b203 Compacted 1@1 + 10@2 files => 21322314 bytes
+2023/09/11-16:36:03.621 b203 compacted to: files[ 0 1 54 0 0 0 0 ]
+2023/09/11-16:36:03.625 b203 Delete type=2 #5732
+2023/09/11-16:36:03.625 b203 Delete type=2 #5733
+2023/09/11-16:36:03.625 b203 Delete type=2 #5731
+2023/09/11-16:36:03.625 b203 Delete type=2 #5757
+2023/09/11-16:36:03.625 b203 Delete type=2 #5756
+2023/09/11-16:36:03.625 b203 Delete type=2 #5754
+2023/09/11-16:36:03.625 b203 Delete type=2 #5755
+2023/09/11-16:36:03.625 b203 Delete type=2 #5751
+2023/09/11-16:36:03.625 b203 Delete type=2 #5752
+2023/09/11-16:36:03.626 b203 Delete type=2 #5753
+2023/09/11-16:36:03.626 b203 Delete type=2 #5767
+2023/09/11-16:38:12.393 f603 Compacting 1@1 + 7@2 files
+2023/09/11-16:38:12.475 f603 Generated table #5806@1: 97944 keys, 2246629 bytes
+2023/09/11-16:38:12.549 f603 Generated table #5807@1: 99247 keys, 2247926 bytes
+2023/09/11-16:38:12.624 f603 Generated table #5808@1: 97656 keys, 2248112 bytes
+2023/09/11-16:38:12.697 f603 Generated table #5809@1: 97965 keys, 2248146 bytes
+2023/09/11-16:38:12.780 f603 Generated table #5810@1: 98835 keys, 2247342 bytes
+2023/09/11-16:38:12.846 f603 Generated table #5811@1: 98163 keys, 2247718 bytes
+2023/09/11-16:38:12.859 f603 Generated table #5812@1: 12039 keys, 318545 bytes
+2023/09/11-16:38:12.859 f603 Compacted 1@1 + 7@2 files => 13804418 bytes
+2023/09/11-16:38:12.868 f603 compacted to: files[ 0 0 54 0 0 0 0 ]
+2023/09/11-16:38:12.870 f603 Delete type=2 #5768
+2023/09/11-16:38:12.870 f603 Delete type=2 #5750
+2023/09/11-16:38:12.870 f603 Delete type=2 #5747
+2023/09/11-16:38:12.870 f603 Delete type=2 #5749
+2023/09/11-16:38:12.870 f603 Delete type=2 #5748
+2023/09/11-16:38:12.870 f603 Delete type=2 #5760
+2023/09/11-16:38:12.870 f603 Delete type=2 #5758
+2023/09/11-16:38:12.870 f603 Delete type=2 #5759
