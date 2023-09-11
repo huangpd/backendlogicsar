@@ -27,7 +27,7 @@ const client = new Client({
 });
 
 let autenticacion = 0;
-
+//probando
 const bot = async () => {
   client.on("ready", () => {
     console.log("Cliente Logeado");
