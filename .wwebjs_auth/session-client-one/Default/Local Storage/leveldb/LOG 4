@@ -1,6 +1,0 @@
-2023/09/08-15:14:48.705 9d03 Reusing MANIFEST /Users/damianoliva/Desktop/CarryOn/Logicsar/backend/.wwebjs_auth/session-client-one/Default/Local Storage/leveldb/MANIFEST-000001
-2023/09/08-15:14:48.705 9d03 Recovering log #4
-2023/09/08-15:14:48.706 9d03 Reusing old log /Users/damianoliva/Desktop/CarryOn/Logicsar/backend/.wwebjs_auth/session-client-one/Default/Local Storage/leveldb/000004.log 
-2023/09/08-15:16:50.346 12a07 Level-0 table #7: started
-2023/09/08-15:16:50.362 12a07 Level-0 table #7: 30199 bytes OK
-2023/09/08-15:16:50.372 12a07 Delete type=0 #4
